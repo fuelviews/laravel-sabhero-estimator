@@ -21,17 +21,17 @@ class SabHeroEstimatorServiceProvider extends PackageServiceProvider
             ->hasConfigFile('sabhero-estimator')
             ->hasViews('sabhero-estimator')
             ->hasMigrations([
-                'create_sabhero_estimator_areas_table',
-                'create_sabhero_estimator_multipliers_table',
-                'create_sabhero_estimator_projects_table',
-                'create_sabhero_estimator_rates_table',
-                'create_sabhero_estimator_settings_table',
-                'create_sabhero_estimator_surfaces_table'
+                'create_estimator_rates_table',
+                'create_estimator_projects_table',
+                'create_estimator_areas_table',
+                'create_estimator_surfaces_table',
+                'create_estimator_settings_table',
+                'create_estimator_multipliers_table'
             ]);
     }
 
     public function bootingPackage(): void
     {
-        Livewire::component('sabhero-portfolio::project-estimator', ProjectEstimator::class);
+        Livewire::component('sabhero-estimator::project-estimator', ProjectEstimator::class);
     }
 }

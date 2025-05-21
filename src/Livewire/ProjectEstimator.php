@@ -473,8 +473,7 @@ public function removeSurface($areaIndex, $surfaceIndex)
     public function render()
     {
 
-        return view('livewire.project-estimator', [
-            // Pass any additional data for dropdowns or rate selections if needed.
+        return view('sabhero-estimator::livewire.project-estimator', [
         ]);
     }
 }

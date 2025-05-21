@@ -9,9 +9,6 @@ class MultipliersTableSeeder extends Seeder
 {
     public function run(): void
     {
-        // Clear any existing rows in development if desired.
-        // DB::table('multipliers')->truncate();
-
         $data = [
             // House style multipliers
             [
