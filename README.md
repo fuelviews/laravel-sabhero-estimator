@@ -22,22 +22,28 @@ php artisan vendor:publish --tag="sabhero-estimator-migrations"
 php artisan migrate
 ```
 
-You can publish the assets with:
-
-```bash
-php artisan vendor:publish --tag="sabhero-estimator-assets"
-```
-
 You can publish the config file with:
 
 ```bash
 php artisan vendor:publish --tag="sabhero-estimator-config"
 ```
 
+You can modify these settings in your `.env` file:
+
+```
+SABHERO_ESTIMATOR_MEDIA_DISK=s3  # Example: Use S3 for media storage
+```
+
 Optionally, you can publish the views using
 
 ```bash
 php artisan vendor:publish --tag="sabhero-estimator-views"
+```
+
+You can publish the assets with:
+
+```bash
+php artisan vendor:publish --tag="sabhero-estimator-assets"
 ```
 
 ## Usage

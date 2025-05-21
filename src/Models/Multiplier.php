@@ -42,8 +42,14 @@ class Multiplier extends Model implements HasMedia
      */
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('house_style_image')
-            ->singleFile();
-
+        // Get collection name from config or use default
+        $collectionName = config('sabhero-estimator.collections.estimator_house_style_image', 'estimator_house_style_image');
+        
+        // Get disk from config or use default
+        $disk = config('sabhero-estimator.media_disk', 'public');
+        
+        $this->addMediaCollection($collectionName)
+            ->useDisk($disk)
+            ->withResponsiveImages();
     }
 }

@@ -138,10 +138,10 @@ return new class extends Migration
             // Create a file that will be used by the post-migration command
             $packageRoot = dirname(__DIR__, 2);
             $resourcesPath = $packageRoot . '/resources/dist';
-            
+
             // Find each house style and directly set its image
             $houseStyles = Multiplier::where('category', 'house_style')->get();
-            
+
             foreach ($houseStyles as $style) {
                 // Get the image path
                 $imageFileName = null;
@@ -151,43 +151,43 @@ return new class extends Migration
                         break;
                     }
                 }
-                
+
                 if ($imageFileName) {
-                    echo "Processing {$style->key} image... ";
-                    
                     // Try multiple paths - package development and vendor paths
                     $imagePath = $resourcesPath . '/' . $imageFileName;
                     $vendorPath = base_path('vendor/fuelviews/laravel-sabhero-estimator/resources/dist/' . $imageFileName);
-                    
+
                     if (File::exists($imagePath)) {
-                        echo "Image found in package! ";
                         $foundImagePath = $imagePath;
                     } elseif (File::exists($vendorPath)) {
-                        echo "Image found in vendor! ";
                         $foundImagePath = $vendorPath;
                     } else {
                         echo "Image file not found!\n";
                         continue;
                     }
+
+                    // Get the collection name from config or use default
+                    $collectionName = config('sabhero-estimator.collections.estimator_house_style_image', 'estimator_house_style_image');
                     
                     // Clear existing media first to avoid duplicates
-                    $style->clearMediaCollection('house_style_image');
-                    
+                    $style->clearMediaCollection($collectionName);
+
                     // Create a temporary copy to avoid issues with symlinks and permissions
                     $tempDir = sys_get_temp_dir();
                     $tempFile = $tempDir . '/' . basename($imageFileName);
                     File::copy($foundImagePath, $tempFile);
-                        
+
                         // Make sure the file can be read
                         chmod($tempFile, 0644);
-                        
+
                         // Add the image to the media library
                         try {
+                            // Get the disk from config or use default
+                            $disk = config('sabhero-estimator.media_disk', 'public');
+
                             $media = $style->addMedia($tempFile)
                                 ->preservingOriginal()
-                                ->toMediaCollection('house_style_image');
-                                
-                            echo "Media added with ID: {$media->id}\n";
+                                ->toMediaCollection($collectionName, $disk);
                         } catch (\Exception $e) {
                             echo "Error: " . $e->getMessage() . "\n";
                         }
@@ -204,6 +204,6 @@ return new class extends Migration
     public function down(): void
     {
         // Optional: You can remove the multipliers if desired
-        // DB::table('multipliers')->truncate();
+        DB::table('multipliers')->truncate();
     }
 };
