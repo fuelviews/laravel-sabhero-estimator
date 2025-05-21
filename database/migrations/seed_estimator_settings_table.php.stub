@@ -1,0 +1,43 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        $settings = [
+            ['key' => 'deviation_percentage', 'value' => '15'],
+            ['key' => 'coverage_label', 'value' => 'How much of the house is being painted?'],
+            ['key' => 'number_of_floors_label', 'value' => 'Number of Floors'],
+            ['key' => 'number_of_floors_default_option', 'value' => 'Select the number of floors'],
+            ['key' => 'select_house_style_label', 'value' => 'Select House Style:'],
+            ['key' => 'paint_condition_label', 'value' => 'Condition of Existing Paint'],
+            ['key' => 'paint_condition_default_option', 'value' => 'Select condition'],
+        ];
+
+        foreach ($settings as $setting) {
+            DB::table('settings')->updateOrInsert(
+                ['key' => $setting['key']],
+                [
+                    'value' => $setting['value'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        // Optional: You can remove the settings if desired
+        // DB::table('settings')->truncate();
+    }
+};

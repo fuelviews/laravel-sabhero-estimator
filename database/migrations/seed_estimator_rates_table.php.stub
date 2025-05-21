@@ -1,0 +1,67 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        $rates = [
+            [
+                'surface_type' => 'Interior Wall',
+                'rate'         => 2.00,
+                'input_type'   => 'measurement', // e.g., walls use square footage
+                'project_type' => 'interior',
+                'description'  => null,
+            ],
+            [
+                'surface_type' => 'Door',
+                'rate'         => 1.00,
+                'input_type'   => 'quantity',    // doors are counted
+                'project_type' => 'interior',
+                'description'  => null,
+            ],
+            [
+                'surface_type' => 'Window',
+                'rate'         => 0.75,
+                'input_type'   => 'quantity',    // windows are counted
+                'project_type' => 'interior',
+                'description'  => null,
+            ],
+            [
+                'surface_type' => 'exterior',
+                'rate'         => 3.00,
+                'input_type'   => 'measurement', // e.g., for calculating based on total area
+                'project_type' => 'exterior',
+                'description'  => null,
+            ],
+        ];
+
+        foreach ($rates as $rate) {
+            DB::table('rates')->updateOrInsert(
+                ['surface_type' => $rate['surface_type']],
+                [
+                    'rate'         => $rate['rate'],
+                    'input_type'   => $rate['input_type'],
+                    'project_type' => $rate['project_type'],
+                    'description'  => $rate['description'],
+                    'created_at'   => now(),
+                    'updated_at'   => now(),
+                ]
+            );
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        // Optional: You can remove the rates if desired
+        // DB::table('rates')->truncate();
+    }
+};

@@ -117,11 +117,22 @@ class ProjectEstimator extends Component
             ]],
         ];
 
-        // Retrieve house style records with their key and image
-        $this->houseStyles = \Fuelviews\SabHeroEstimator\Models\Multiplier::where('category', 'house_style')
-        ->distinct()
-        ->get(['key', 'image'])
-        ->toArray();
+        // Retrieve house style records with their key and media
+        $houseStyles = \Fuelviews\SabHeroEstimator\Models\Multiplier::where('category', 'house_style')
+            ->distinct()
+            ->get(['id', 'key']);
+
+        // Add media to each house style
+        $this->houseStyles = $houseStyles->map(function($style) {
+            return [
+                'key' => $style->key,
+                'media' => $style->getMedia('house_style_image')->map(function($media) {
+                    return [
+                        'original_url' => $media->getUrl()
+                    ];
+                })->toArray(),
+            ];
+        })->toArray();
 
         // Load the "Select House Style" label from the settings table.
         $this->selectHouseStyleLabel = \Fuelviews\SabHeroEstimator\Models\Setting::where('key', 'select_house_style_label')

@@ -1,0 +1,209 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Fuelviews\SabHeroEstimator\Models\Multiplier;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\File;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        // First, make sure we have the media tables
+        if (!Schema::hasTable('media')) {
+            echo "Media table not found. Make sure you've run the media-library migrations.\n";
+        }
+
+        $multipliers = [
+            // House style multipliers
+            [
+                'category' => 'house_style',
+                'key'      => 'ranch',
+                'value'    => 1.20,
+                'image_path' => 'images/pbg-ranch-1.jpg',
+            ],
+            [
+                'category' => 'house_style',
+                'key'      => 'colonial',
+                'value'    => 1.60,
+                'image_path' => 'images/pbg-colonial-1.jpg',
+            ],
+            [
+                'category' => 'house_style',
+                'key'      => 'modern',
+                'value'    => 1.40,
+                'image_path' => 'images/pbg-modern-1.jpg',
+            ],
+            [
+                'category' => 'house_style',
+                'key'      => 'cottage',
+                'value'    => 1.20,
+                'image_path' => 'images/pbg-cottage-1.jpg',
+            ],
+            // Floor multipliers
+            [
+                'category' => 'floor',
+                'key'      => '1',
+                'value'    => 1.00,
+            ],
+            [
+                'category' => 'floor',
+                'key'      => '2',
+                'value'    => 1.50,
+            ],
+            [
+                'category' => 'floor',
+                'key'      => '3',
+                'value'    => 1.80,
+            ],
+            // Condition multipliers
+            [
+                'category' => 'condition',
+                'key'      => 'excellent',
+                'value'    => 1.00,
+            ],
+            [
+                'category' => 'condition',
+                'key'      => 'good',
+                'value'    => 1.10,
+            ],
+            [
+                'category' => 'condition',
+                'key'      => 'fair',
+                'value'    => 1.20,
+            ],
+            [
+                'category' => 'condition',
+                'key'      => 'poor',
+                'value'    => 1.30,
+            ],
+            // Coverage multipliers
+            [
+                'category' => 'coverage',
+                'key'      => 'The Entire House',
+                'value'    => 1.00,
+            ],
+            [
+                'category' => 'coverage',
+                'key'      => 'Three-quarters of the house',
+                'value'    => 0.80,
+            ],
+            [
+                'category' => 'coverage',
+                'key'      => 'Half the house',
+                'value'    => 0.60,
+            ],
+            [
+                'category' => 'coverage',
+                'key'      => 'A quarter of the house',
+                'value'    => 0.40,
+            ],
+        ];
+
+        // First, insert or update all multiplier records without dealing with media
+        foreach ($multipliers as $multiplierData) {
+            // Extract image_path and remove it from the data array
+            $imagePath = $multiplierData['image_path'] ?? null;
+            unset($multiplierData['image_path']);
+
+            // Store original path for later
+            $originalImagePath = $imagePath;
+
+            // Store the image path in the database for now
+            if ($imagePath) {
+                $multiplierData['image'] = 'vendor/sabhero-estimator/' . $imagePath;
+            }
+
+            // Insert or update the multiplier record
+            DB::table('multipliers')->updateOrInsert(
+                [
+                    'category' => $multiplierData['category'],
+                    'key'      => $multiplierData['key']
+                ],
+                array_merge($multiplierData, [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ])
+            );
+        }
+
+        // Then, in a second step, handle media attachments for all house styles
+        // This is done as a separate step to ensure all models are created first
+        if (Schema::hasTable('media')) {
+            // For a migration, we'll use the artisan command directly
+            // Create a file that will be used by the post-migration command
+            $packageRoot = dirname(__DIR__, 2);
+            $resourcesPath = $packageRoot . '/resources/dist';
+            
+            // Find each house style and directly set its image
+            $houseStyles = Multiplier::where('category', 'house_style')->get();
+            
+            foreach ($houseStyles as $style) {
+                // Get the image path
+                $imageFileName = null;
+                foreach ($multipliers as $multiplierData) {
+                    if ($multiplierData['category'] === 'house_style' && $multiplierData['key'] === $style->key) {
+                        $imageFileName = $multiplierData['image_path'] ?? null;
+                        break;
+                    }
+                }
+                
+                if ($imageFileName) {
+                    echo "Processing {$style->key} image... ";
+                    
+                    // Try multiple paths - package development and vendor paths
+                    $imagePath = $resourcesPath . '/' . $imageFileName;
+                    $vendorPath = base_path('vendor/fuelviews/laravel-sabhero-estimator/resources/dist/' . $imageFileName);
+                    
+                    if (File::exists($imagePath)) {
+                        echo "Image found in package! ";
+                        $foundImagePath = $imagePath;
+                    } elseif (File::exists($vendorPath)) {
+                        echo "Image found in vendor! ";
+                        $foundImagePath = $vendorPath;
+                    } else {
+                        echo "Image file not found!\n";
+                        continue;
+                    }
+                    
+                    // Clear existing media first to avoid duplicates
+                    $style->clearMediaCollection('house_style_image');
+                    
+                    // Create a temporary copy to avoid issues with symlinks and permissions
+                    $tempDir = sys_get_temp_dir();
+                    $tempFile = $tempDir . '/' . basename($imageFileName);
+                    File::copy($foundImagePath, $tempFile);
+                        
+                        // Make sure the file can be read
+                        chmod($tempFile, 0644);
+                        
+                        // Add the image to the media library
+                        try {
+                            $media = $style->addMedia($tempFile)
+                                ->preservingOriginal()
+                                ->toMediaCollection('house_style_image');
+                                
+                            echo "Media added with ID: {$media->id}\n";
+                        } catch (\Exception $e) {
+                            echo "Error: " . $e->getMessage() . "\n";
+                        }
+                }
+            }
+        } else {
+            echo "Media table not found, skipping image attachment.\n";
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        // Optional: You can remove the multipliers if desired
+        // DB::table('multipliers')->truncate();
+    }
+};

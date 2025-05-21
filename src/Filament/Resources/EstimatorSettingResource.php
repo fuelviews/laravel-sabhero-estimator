@@ -2,7 +2,7 @@
 
 namespace Fuelviews\SabHeroEstimator\Filament\Resources;
 
-use Fuelviews\SabHeroEstimator\Filament\Resources\SettingResource\Pages;
+use Fuelviews\SabHeroEstimator\Filament\Resources\EstimatorSettingResource\Pages;
 use Fuelviews\SabHeroEstimator\Models\Setting;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
@@ -11,7 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Str;
 
-class SettingResource extends Resource
+class EstimatorSettingResource extends Resource
 {
     protected static ?string $model = Setting::class;
 

@@ -186,8 +186,8 @@
                 <input type="radio" wire:model.live="house_style" value="{{ $style['key'] }}" class="hidden">
                 <div class="border-2 rounded h-40 flex flex-col items-center justify-between {{ $house_style === $style['key'] ? 'border-blue-500' : 'border-gray-300' }} p-0">
                     <div class="w-full h-28 overflow-hidden">
-                        @if(!empty($style['image']))
-                            <img src="{{ asset('storage/' . $style['image']) }}"
+                        @if($style['media'] && count($style['media']) > 0)
+                            <img src="{{ $style['media'][0]['original_url'] }}"
                                  alt="{{ $style['key'] }}"
                                  class="w-full h-full object-cover">
                         @else

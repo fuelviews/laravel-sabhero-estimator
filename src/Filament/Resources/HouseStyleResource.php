@@ -8,7 +8,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables;
 use Filament\Tables\Table; // Import the correct Table class from Filament\Tables
 use Illuminate\Database\Eloquent\Builder;
 
@@ -37,9 +37,9 @@ class HouseStyleResource extends Resource
                 ->label('Multiplier')
                 ->numeric()
                 ->required(),
-            Forms\Components\FileUpload::make('image')
+            Forms\Components\SpatieMediaLibraryFileUpload::make('house_style_image')
                 ->label('House Style Image')
-                ->directory('house-styles')
+                ->collection('house_style_image')
                 ->image()
                 ->maxSize(1024),
             // Preset the category to "house_style" and disable editing.
@@ -54,7 +54,9 @@ class HouseStyleResource extends Resource
         return $table->columns([
             TextColumn::make('key')->label('House Style'),
             TextColumn::make('value')->label('Multiplier'),
-            ImageColumn::make('image')->label('Image'),
+            Tables\Columns\SpatieMediaLibraryImageColumn::make('house_style_image')
+                ->label('Image')
+                ->collection('house_style_image'),
         ]);
     }
 

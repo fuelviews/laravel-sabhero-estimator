@@ -20,6 +20,10 @@ class SabHeroEstimator implements Plugin
     public function register(Panel $panel): void
     {
         $panel->resources([
+            Filament\Resources\EstimatorSettingResource::class,
+            Filament\Resources\HouseStyleResource::class,
+            Filament\Resources\InteriorRateResource::class,
+            Filament\Resources\MultiplierResource::class,
             Filament\Resources\ExteriorRateResource::class,
         ]);
     }

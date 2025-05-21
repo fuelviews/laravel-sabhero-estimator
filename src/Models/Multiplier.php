@@ -4,10 +4,12 @@ namespace Fuelviews\SabHeroEstimator\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Multiplier extends Model
+class Multiplier extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -19,9 +21,9 @@ class Multiplier extends Model
         'number_of_floors',
         'paint_condition',
         'multiplier',
-        'image',
         'key',
         'value',
+        'category',
     ];
 
     /**
@@ -32,5 +34,16 @@ class Multiplier extends Model
     protected $casts = [
         'id' => 'integer',
         'multiplier' => 'decimal:2',
+        'value' => 'decimal:2',
     ];
+
+    /**
+     * Register media collections for the model
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('house_style_image')
+            ->singleFile();
+
+    }
 }
