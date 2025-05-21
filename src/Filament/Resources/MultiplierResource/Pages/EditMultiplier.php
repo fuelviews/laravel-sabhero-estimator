@@ -1,0 +1,19 @@
+<?php
+
+namespace Fuelviews\SabHeroEstimator\Filament\Resources\MultiplierResource\Pages;
+
+use Fuelviews\SabHeroEstimator\Filament\Resources\MultiplierResource;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
+
+class EditMultiplier extends EditRecord
+{
+    protected static string $resource = MultiplierResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make(),
+        ];
+    }
+}

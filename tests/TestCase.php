@@ -1,10 +1,10 @@
 <?php
 
-namespace Fuelviews\SabHeroEestimator\Tests;
+namespace Fuelviews\SabHeroEstimator\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Fuelviews\SabHeroEestimator\SabHeroEestimatorServiceProvider;
+use Fuelviews\SabHeroEstimator\SabHeroEstimatorServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -13,14 +13,14 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName): string => 'Fuelviews\\SabHeroEestimator\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName): string => 'Fuelviews\\SabHeroEstimator\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 
     protected function getPackageProviders($app)
     {
         return [
-            SabHeroEestimatorServiceProvider::class,
+            SabHeroEstimatorServiceProvider::class,
         ];
     }
 

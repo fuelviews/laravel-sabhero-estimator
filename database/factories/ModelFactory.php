@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuelviews\SabHeroEestimator\Database\Factories;
+namespace Fuelviews\SabHeroEstimator\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

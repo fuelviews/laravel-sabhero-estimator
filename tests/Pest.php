@@ -1,5 +1,5 @@
 <?php
 
-use Fuelviews\SabHeroEestimator\Tests\TestCase;
+use Fuelviews\SabHeroEstimator\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);

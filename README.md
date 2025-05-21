@@ -44,8 +44,8 @@ php artisan vendor:publish --tag="laravel-sabhero-estimator-views"
 ## Usage
 
 ```php
-$sabHeroEestimator = new Fuelviews\SabHeroEestimator();
-echo $sabHeroEestimator->echoPhrase('Hello, Fuelviews!');
+$sabHeroEstimator = new Fuelviews\SabHeroEstimator();
+echo $sabHeroEstimator->echoPhrase('Hello, Fuelviews!');
 ```
 
 ## Testing

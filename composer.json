@@ -2,23 +2,27 @@
     "name": "fuelviews/laravel-sabhero-estimator",
     "description": "This is my package laravel-sabhero-estimator",
     "keywords": [
-        "Fuelviews",
+        "fuelviews",
         "laravel",
-        "laravel-sabhero-estimator"
+        "sabhero-estimator"
     ],
     "homepage": "https://github.com/fuelviews/laravel-sabhero-estimator",
     "license": "MIT",
     "authors": [
         {
             "name": "thejmitchener",
-            "email": "thejmitchener@gmail.com",
+            "homepage": "https://fuelviews.com",
             "role": "Developer"
         }
     ],
     "require": {
         "php": "^8.3",
-        "spatie/laravel-package-tools": "^1.92",
-        "illuminate/contracts": "^10.0||^11.0||^12.0"
+        "filament/spatie-laravel-media-library-plugin": "^3.3",
+        "filament/support": "^3.3",
+        "fuelviews/laravel-forms": "^0.0.23",
+        "illuminate/contracts": "^10.0||^11.0||^12.0",
+        "livewire/livewire": "^3.6",
+        "spatie/laravel-package-tools": "^1.92"
     },
     "require-dev": {
         "laravel/pint": "^1.14",
@@ -32,13 +36,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Fuelviews\\SabHeroEestimator\\": "src/",
-            "Fuelviews\\SabHeroEestimator\\Database\\Factories\\": "database/factories/"
+            "Fuelviews\\SabHeroEstimator\\": "src/",
+            "Fuelviews\\SabHeroEstimator\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Fuelviews\\SabHeroEestimator\\Tests\\": "tests/",
+            "Fuelviews\\SabHeroEstimator\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -60,10 +64,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Fuelviews\\SabHeroEestimator\\SabHeroEestimatorServiceProvider"
+                "SabHeroEstimatorServiceProvider"
             ],
             "aliases": {
-                "SabHeroEestimator": "Fuelviews\\SabHeroEestimator\\Facades\\SabHeroEestimator"
+                "SabHeroEstimator": "SabHeroEstimator"
             }
         }
     },

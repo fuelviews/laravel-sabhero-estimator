@@ -1,6 +1,6 @@
 <?php
 
-// config for Fuelviews/SabHeroEestimator
+// config for Fuelviews/SabHeroEstimator
 return [
 
 ];
