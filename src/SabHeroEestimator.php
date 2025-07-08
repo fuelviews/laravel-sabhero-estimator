@@ -2,4 +2,6 @@
 
 namespace Fuelviews\SabHeroEestimator;
 
-class SabHeroEestimator {}
+class SabHeroEestimator
+{
+}
