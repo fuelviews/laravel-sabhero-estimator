@@ -2,9 +2,9 @@
 
 namespace Fuelviews\SabHeroEestimator;
 
+use Fuelviews\SabHeroEestimator\Commands\SabHeroEestimatorCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Fuelviews\SabHeroEestimator\Commands\SabHeroEestimatorCommand;
 
 class SabHeroEestimatorServiceProvider extends PackageServiceProvider
 {
