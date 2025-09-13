@@ -2,9 +2,9 @@
 
 namespace Fuelviews\SabHeroEstimator\Tests;
 
+use Fuelviews\SabHeroEstimator\SabHeroEstimatorServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Fuelviews\SabHeroEstimator\SabHeroEstimatorServiceProvider;
 
 class TestCase extends Orchestra
 {
