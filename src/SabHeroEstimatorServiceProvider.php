@@ -2,9 +2,9 @@
 
 namespace Fuelviews\SabHeroEstimator;
 
+use Fuelviews\SabHeroEstimator\Commands\SabHeroEstimatorCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Fuelviews\SabHeroEstimator\Commands\SabHeroEstimatorCommand;
 
 class SabHeroEstimatorServiceProvider extends PackageServiceProvider
 {
