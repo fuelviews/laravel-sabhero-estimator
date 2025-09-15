@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('estimator_surfaces', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('area_id')->constrained('estimator_areas')->onDelete('cascade');
+            $table->string('surface_type');
+            $table->decimal('measurement', 10, 2)->nullable();
+            $table->integer('quantity')->default(1);
+            $table->timestamps();
+
+            $table->index('area_id');
+            $table->index('surface_type');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('estimator_surfaces');
+    }
+};

@@ -1,10 +1,16 @@
 {
     "name": "fuelviews/laravel-sabhero-estimator",
-    "description": "This is my package laravel-sabhero-estimator",
+    "description": "A comprehensive painting project estimator package for Laravel applications with Livewire and FilamentPHP",
     "keywords": [
         "fuelviews",
         "laravel",
-        "laravel-sabhero-estimator"
+        "laravel-sabhero-estimator",
+        "painting",
+        "estimator",
+        "livewire",
+        "filament",
+        "calculator",
+        "project-estimation"
     ],
     "homepage": "https://github.com/fuelviews/laravel-sabhero-estimator",
     "license": "MIT",
@@ -17,7 +23,13 @@
     "require": {
         "php": "^8.3",
         "spatie/laravel-package-tools": "^1.92",
-        "illuminate/contracts": "^10.0||^11.0||^12.0"
+        "illuminate/contracts": "^10.0||^11.0||^12.0",
+        "livewire/livewire": "^3.0",
+        "filament/filament": "^3.0",
+        "illuminate/database": "^10.0||^11.0||^12.0",
+        "illuminate/support": "^10.0||^11.0||^12.0",
+        "illuminate/validation": "^10.0||^11.0||^12.0",
+        "illuminate/http": "^10.0||^11.0||^12.0"
     },
     "require-dev": {
         "laravel/pint": "^1.14",
@@ -32,7 +44,8 @@
     "autoload": {
         "psr-4": {
             "Fuelviews\\SabHeroEstimator\\": "src/",
-            "Fuelviews\\SabHeroEstimator\\Database\\Factories\\": "database/factories/"
+            "Fuelviews\\SabHeroEstimator\\Database\\Factories\\": "database/factories/",
+            "Fuelviews\\SabHeroEstimator\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
