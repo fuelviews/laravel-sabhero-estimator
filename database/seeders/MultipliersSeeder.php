@@ -11,7 +11,7 @@ class MultipliersSeeder extends Seeder
     {
         $multipliers = [
             // House styles
-            ['category' => 'house_style', 'key' => 'ranch', 'value' => 1.0, 'image' => null],
+            ['category' => 'house_style', 'key' => 'ranch', 'value' => 1.0, 'image' => 'images/pbg-fence-1.jpg'],
             ['category' => 'house_style', 'key' => 'colonial', 'value' => 1.15, 'image' => null],
             ['category' => 'house_style', 'key' => 'victorian', 'value' => 1.25, 'image' => null],
             ['category' => 'house_style', 'key' => 'modern', 'value' => 1.1, 'image' => null],
