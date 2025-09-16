@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('estimator_settings', function (Blueprint $table) {
+        Schema::create(config('sabhero-estimator.table.prefix') . 'settings', function (Blueprint $table) {
             $table->id();
             $table->string('key')->unique();
             $table->text('value');
@@ -20,6 +20,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('estimator_settings');
+        Schema::dropIfExists(config('sabhero-estimator.table.prefix') . 'settings');
     }
 };

@@ -19,7 +19,7 @@ class FormSubmissionService
      */
     public function submit(array $projectData): bool
     {
-        if (! config('sabhero-estimator.form_endpoints.enabled') || ! $this->endpoint) {
+        if (! $this->endpoint) {
             return false;
         }
 

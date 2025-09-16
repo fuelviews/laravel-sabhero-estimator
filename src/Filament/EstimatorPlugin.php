@@ -13,7 +13,7 @@ class EstimatorPlugin implements Plugin
 {
     public static function make(): static
     {
-        return new static();
+        return new static;
     }
 
     public function getId(): string
@@ -33,25 +33,11 @@ class EstimatorPlugin implements Plugin
 
     protected function getResources(): array
     {
-        $resources = [];
-        $config = config('sabhero-estimator.filament.register_resources');
-
-        if ($config['settings']) {
-            $resources[] = SettingResource::class;
-        }
-
-        if ($config['multipliers']) {
-            $resources[] = MultiplierResource::class;
-        }
-
-        if ($config['rates']) {
-            $resources[] = RateResource::class;
-        }
-
-        if ($config['projects']) {
-            $resources[] = ProjectResource::class;
-        }
-
-        return $resources;
+        return [
+            SettingResource::class,
+            MultiplierResource::class,
+            RateResource::class,
+            ProjectResource::class,
+        ];
     }
 }

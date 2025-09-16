@@ -13,7 +13,7 @@ class Area extends Model
 
     public function getTable(): string
     {
-        return config('sabhero-estimator.database.table_prefix').'areas';
+        return config('sabhero-estimator.table.prefix').'areas';
     }
 
     protected $fillable = [

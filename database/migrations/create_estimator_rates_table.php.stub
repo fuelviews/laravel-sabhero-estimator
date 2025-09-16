@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('estimator_rates', function (Blueprint $table) {
+        Schema::create(config('sabhero-estimator.table.prefix') . 'rates', function (Blueprint $table) {
             $table->id();
             $table->string('surface_type')->unique();
             $table->decimal('rate', 10, 2);
@@ -23,6 +23,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('estimator_rates');
+        Schema::dropIfExists(config('sabhero-estimator.table.prefix') . 'rates');
     }
 };

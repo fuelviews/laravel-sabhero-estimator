@@ -11,7 +11,7 @@ class Setting extends Model
 
     public function getTable(): string
     {
-        return config('sabhero-estimator.database.table_prefix').'settings';
+        return config('sabhero-estimator.table.prefix').'settings';
     }
 
     protected $fillable = [
@@ -26,7 +26,7 @@ class Setting extends Model
     {
         $setting = self::where('key', 'deviation_percentage')->first();
 
-        return $setting ? ((float) $setting->value / 100) : (float) config('sabhero-estimator.defaults.deviation_percentage') / 100;
+        return $setting ? ((float) $setting->value / 100) : 0.35; // 35% default
     }
 
     /**

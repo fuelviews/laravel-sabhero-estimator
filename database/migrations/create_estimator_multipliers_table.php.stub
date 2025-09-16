@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('estimator_multipliers', function (Blueprint $table) {
+        Schema::create(config('sabhero-estimator.table.prefix') . 'multipliers', function (Blueprint $table) {
             $table->id();
             $table->string('category'); // 'house_style', 'floor', 'condition', 'coverage', 'interior_extra'
             $table->string('key')->nullable();
@@ -22,6 +22,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('estimator_multipliers');
+        Schema::dropIfExists(config('sabhero-estimator.table.prefix') . 'multipliers');
     }
 };

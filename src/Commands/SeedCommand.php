@@ -22,13 +22,13 @@ class SeedCommand extends Command
         $this->components->info('Seeding Sab Hero Estimator data...');
 
         $this->components->task('Seeding estimator data', function () {
-            $seedersPath = __DIR__ . '/../../database/seeders/';
+            $seedersPath = __DIR__.'/../../database/seeders/';
 
             // Require all seeder files
-            require_once $seedersPath . 'SettingsSeeder.php';
-            require_once $seedersPath . 'RatesSeeder.php';
-            require_once $seedersPath . 'MultipliersSeeder.php';
-            require_once $seedersPath . 'EstimatorSeeder.php';
+            require_once $seedersPath.'SettingsSeeder.php';
+            require_once $seedersPath.'RatesSeeder.php';
+            require_once $seedersPath.'MultipliersSeeder.php';
+            require_once $seedersPath.'EstimatorSeeder.php';
 
             $seeder = new \Fuelviews\SabHeroEstimator\Database\Seeders\EstimatorSeeder;
             $seeder->run();
@@ -41,4 +41,3 @@ class SeedCommand extends Command
         return self::SUCCESS;
     }
 }
-

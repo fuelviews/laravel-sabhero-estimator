@@ -11,7 +11,7 @@ class Multiplier extends Model
 
     public function getTable(): string
     {
-        return config('sabhero-estimator.database.table_prefix').'multipliers';
+        return config('sabhero-estimator.table.prefix').'multipliers';
     }
 
     protected $fillable = [

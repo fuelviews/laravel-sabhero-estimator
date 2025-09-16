@@ -30,7 +30,6 @@ class SabHeroEstimatorServiceProvider extends PackageServiceProvider
                 InstallCommand::class,
                 SeedCommand::class,
             ])
-            ->hasRoute('web')
             ->hasInstallCommand(function (SpatieInstallCommand $command) {
                 $command
                     ->publishConfigFile()
@@ -63,10 +62,7 @@ class SabHeroEstimatorServiceProvider extends PackageServiceProvider
 
         // Filament plugin is registered directly in the AdminPanelProvider
 
-        // Load additional routes if needed
-        if (config('sabhero-estimator.routes.enabled', true)) {
-            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-        }
+        // Routes not needed - estimator is used as embedded Livewire component
 
         // Publish seeders
         $this->publishes([

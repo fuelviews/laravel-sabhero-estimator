@@ -11,7 +11,7 @@ class Rate extends Model
 
     public function getTable(): string
     {
-        return config('sabhero-estimator.database.table_prefix').'rates';
+        return config('sabhero-estimator.table.prefix').'rates';
     }
 
     protected $fillable = [

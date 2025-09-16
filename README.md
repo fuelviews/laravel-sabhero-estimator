@@ -16,14 +16,6 @@ A comprehensive painting project estimator package for Laravel applications. Thi
 - 🚀 FuelForms API integration for lead management
 - ⚙️ Highly configurable with environment-based settings
 
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-sabhero-estimator.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-sabhero-estimator)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
-
 ## Installation
 
 Install the package via Composer:
@@ -69,17 +61,7 @@ php artisan vendor:publish --tag="sabhero-estimator-views"
 
 Add these environment variables to your `.env` file:
 
-```env
-# Form submission to FuelForms API
-ESTIMATOR_FORM_SUBMISSION_ENABLED=true
-ESTIMATOR_PROD_URL=https://api.fuelforms.com/estimator
-ESTIMATOR_DEV_URL=https://dev-api.fuelforms.com/estimator
-
-# Customize table prefix (optional)
-ESTIMATOR_TABLE_PREFIX=estimator_
-
-# Filament integration (optional)
-ESTIMATOR_FILAMENT_ENABLED=true
+```
 ```
 
 ## Usage
@@ -90,15 +72,6 @@ Add the Livewire component to any Blade template:
 
 ```blade
 @livewire('estimator::project-estimator')
-```
-
-Or use it as a standalone route (configured in routes):
-
-```php
-// Visit /estimator to see the form
-Route::get('/get-estimate', function () {
-    return view('my-estimate-page');
-});
 ```
 
 ### User Model Integration
@@ -215,7 +188,9 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
+- [Sweatybreeze](https://github.com/sweatybreeze)
 - [Thejmitchener](https://github.com/fuelviews)
+- [Fuelviews](htt[s://fuelviews.com])
 - [All Contributors](../../contributors)
 
 ## License

@@ -245,7 +245,7 @@
                 <div class="border-2 rounded h-40 flex flex-col items-center justify-between {{ $house_style === $style['key'] ? 'border-blue-500' : 'border-gray-300' }} p-0">
                     <div class="w-full h-28 overflow-hidden">
                         @if(!empty($style['image']))
-                            <img {{ glide()->src('images/' . $style['image'], 300) }}
+                            <img {{ glide()->src('vendor/sabhero-estimator/images/' . $style['image'], 300) }}
                                  alt="{{ $style['key'] }}"
                                  class="w-full h-full object-cover">
                         @else

@@ -12,7 +12,7 @@ class Project extends Model
 
     public function getTable(): string
     {
-        return config('sabhero-estimator.database.table_prefix').'projects';
+        return config('sabhero-estimator.table.prefix').'projects';
     }
 
     protected $fillable = [

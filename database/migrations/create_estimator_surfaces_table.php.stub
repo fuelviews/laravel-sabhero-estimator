@@ -8,9 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('estimator_surfaces', function (Blueprint $table) {
+        Schema::create(config('sabhero-estimator.table.prefix') . 'surfaces', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('area_id')->constrained('estimator_areas')->onDelete('cascade');
+            $table->foreignId('area_id')->constrained(config('sabhero-estimator.table.prefix') . 'areas')->onDelete('cascade');
             $table->string('surface_type');
             $table->decimal('measurement', 10, 2)->nullable();
             $table->integer('quantity')->default(1);
@@ -23,6 +23,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('estimator_surfaces');
+        Schema::dropIfExists(config('sabhero-estimator.table.prefix') . 'surfaces');
     }
 };

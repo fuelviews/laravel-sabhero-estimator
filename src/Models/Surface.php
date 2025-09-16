@@ -12,7 +12,7 @@ class Surface extends Model
 
     public function getTable(): string
     {
-        return config('sabhero-estimator.database.table_prefix').'surfaces';
+        return config('sabhero-estimator.table.prefix').'surfaces';
     }
 
     protected $fillable = [

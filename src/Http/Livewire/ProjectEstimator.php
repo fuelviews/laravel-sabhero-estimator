@@ -318,10 +318,10 @@ class ProjectEstimator extends Component
         if ($step == 2) {
             $this->validate([
                 'project_type' => 'required|in:interior,exterior',
-                'name'         => 'required|string|max:255',
-                'email'        => 'required|email|max:255',
-                'phone'        => 'required|string|max:50',
-                'address'      => 'required|string|max:255',
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'phone' => 'required|string|max:50',
+                'address' => 'required|string|max:255',
             ]);
         }
 
@@ -369,22 +369,22 @@ class ProjectEstimator extends Component
             } else {
                 // Exterior
                 $rules = [
-                    'house_style'       => 'required|string',
-                    'number_of_floors'  => 'required|integer|min:1',
+                    'house_style' => 'required|string',
+                    'number_of_floors' => 'required|integer|min:1',
                     'total_floor_space' => 'required|numeric|min:0',
-                    'paint_condition'   => 'required|string',
-                    'coverage'          => 'required|string',
+                    'paint_condition' => 'required|string',
+                    'coverage' => 'required|string',
                 ];
                 $messages = [
-                    'house_style.required'       => 'Please choose a house style.',
-                    'number_of_floors.required'  => 'Please select the number of floors.',
-                    'number_of_floors.integer'   => 'Number of floors must be a whole number.',
-                    'number_of_floors.min'       => 'Number of floors must be at least 1.',
+                    'house_style.required' => 'Please choose a house style.',
+                    'number_of_floors.required' => 'Please select the number of floors.',
+                    'number_of_floors.integer' => 'Number of floors must be a whole number.',
+                    'number_of_floors.min' => 'Number of floors must be at least 1.',
                     'total_floor_space.required' => 'Please enter the total floor space.',
-                    'total_floor_space.numeric'  => 'Floor space must be a number.',
-                    'total_floor_space.min'      => 'Floor space must be at least zero.',
-                    'paint_condition.required'   => 'Please select the condition of the existing paint.',
-                    'coverage.required'          => 'Please select how much of the house is being painted.',
+                    'total_floor_space.numeric' => 'Floor space must be a number.',
+                    'total_floor_space.min' => 'Floor space must be at least zero.',
+                    'paint_condition.required' => 'Please select the condition of the existing paint.',
+                    'coverage.required' => 'Please select how much of the house is being painted.',
                 ];
 
                 $this->validate($rules, $messages);

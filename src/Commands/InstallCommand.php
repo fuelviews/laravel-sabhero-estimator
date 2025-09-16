@@ -73,10 +73,6 @@ class InstallCommand extends Command
     {
         $this->components->bulletList([
             'Add the Livewire component to your blade template: <fg=yellow>@livewire(\'estimator::project-estimator\')</fg>',
-            'Configure your environment variables in <fg=yellow>.env</fg>:',
-            '  - <fg=cyan>ESTIMATOR_FORM_SUBMISSION_ENABLED=true</fg>',
-            '  - <fg=cyan>ESTIMATOR_PROD_URL=https://api.fuelforms.com/estimator</fg>',
-            '  - <fg=cyan>ESTIMATOR_DEV_URL=https://dev-api.fuelforms.com/estimator</fg>',
             'Access the admin panel via Filament to configure rates and multipliers',
             'Review the published config file: <fg=yellow>config/sabhero-estimator.php</fg>',
         ]);
