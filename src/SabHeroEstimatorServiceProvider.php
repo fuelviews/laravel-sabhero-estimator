@@ -43,7 +43,7 @@ class SabHeroEstimatorServiceProvider extends PackageServiceProvider
     {
         // Register singleton services
         $this->app->singleton('estimator', function () {
-            return new EstimatorManager;
+            return new SabHeroEstimator;
         });
 
         // Register contracts
