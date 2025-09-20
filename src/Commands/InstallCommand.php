@@ -28,7 +28,7 @@ class InstallCommand extends Command
                 $this->components->task('Removing old estimator migrations', function () use ($existingMigrations) {
                     return $this->cleanOldMigrations($existingMigrations);
                 });
-            } elseif (!$this->option('force')) {
+            } elseif (! $this->option('force')) {
                 $this->components->warn('Use --fresh to remove old migrations or --force to overwrite them.');
             }
         }
@@ -106,7 +106,7 @@ class InstallCommand extends Command
         $migrationPath = database_path('migrations');
         $migrations = [];
 
-        if (!File::isDirectory($migrationPath)) {
+        if (! File::isDirectory($migrationPath)) {
             return $migrations;
         }
 
@@ -129,9 +129,11 @@ class InstallCommand extends Command
                 File::delete($migration);
                 $this->components->info('Removed: '.basename($migration));
             }
+
             return true;
         } catch (\Exception $e) {
             $this->components->error('Failed to remove migrations: '.$e->getMessage());
+
             return false;
         }
     }
