@@ -154,25 +154,6 @@ $deviationPercentage = $estimator->getDeviationPercentage();
 $estimator->setSetting('key', 'value');
 ```
 
-### User Model Integration
-
-Add the trait to your User model to associate projects with users:
-
-```php
-use Fuelviews\SabHeroEstimator\Traits\HasEstimatorProjects;
-
-class User extends Authenticatable
-{
-    use HasEstimatorProjects;
-}
-
-// Access user's estimation projects
-$user->estimatorProjects;           // All projects
-$user->interiorProjects;            // Interior projects only
-$user->exteriorProjects;            // Exterior projects only
-$user->recentEstimatorProjects(10); // Recent projects with limit
-```
-
 ### Data Access
 
 ```php
@@ -299,7 +280,6 @@ src/
 ├── Http/Livewire/     # Livewire components
 ├── Models/            # Eloquent models
 ├── Services/          # Business logic services
-├── Traits/            # Reusable traits
 └── SabHeroEstimator.php # Main package class
 ```
 
