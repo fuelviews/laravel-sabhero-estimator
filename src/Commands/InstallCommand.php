@@ -3,18 +3,35 @@
 namespace Fuelviews\SabHeroEstimator\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class InstallCommand extends Command
 {
     protected $signature = 'sab-hero-estimator:install
                             {--seed : Seed the database with default data}
-                            {--force : Force the operation to run when in production}';
+                            {--force : Force overwrite of existing files (config, migrations, etc.)}
+                            {--fresh : Remove old estimator migrations before publishing new ones}';
 
-    protected $description = 'Install the Sab Hero Estimator package';
+    protected $description = 'Install the Sab Hero Estimator package and optionally clean up old migrations';
 
     public function handle(): int
     {
         $this->components->info('Installing Sab Hero Estimator...');
+
+        // Check for existing estimator migrations
+        $existingMigrations = $this->findExistingEstimatorMigrations();
+
+        if (count($existingMigrations) > 0) {
+            $this->components->warn('Found '.count($existingMigrations).' existing estimator migration(s).');
+
+            if ($this->option('fresh')) {
+                $this->components->task('Removing old estimator migrations', function () use ($existingMigrations) {
+                    return $this->cleanOldMigrations($existingMigrations);
+                });
+            } elseif (!$this->option('force')) {
+                $this->components->warn('Use --fresh to remove old migrations or --force to overwrite them.');
+            }
+        }
 
         // Publish config
         $this->components->task('Publishing configuration', function () {
@@ -33,6 +50,9 @@ class InstallCommand extends Command
                 '--force' => $this->option('force'),
             ]) === 0;
         });
+
+        // Validate migrations use correct config path
+        $this->validateMigrations();
 
         // Run migrations
         $runMigrations = $this->components->confirm('Would you like to run the migrations?', true);
@@ -76,5 +96,69 @@ class InstallCommand extends Command
             'Access the admin panel via Filament to configure rates and multipliers',
             'Review the published config file: <fg=yellow>config/sabhero-estimator.php</fg>',
         ]);
+    }
+
+    /**
+     * Find existing estimator migrations in the application
+     */
+    protected function findExistingEstimatorMigrations(): array
+    {
+        $migrationPath = database_path('migrations');
+        $migrations = [];
+
+        if (!File::isDirectory($migrationPath)) {
+            return $migrations;
+        }
+
+        $files = File::glob($migrationPath.'/*create_estimator_*.php');
+
+        foreach ($files as $file) {
+            $migrations[] = $file;
+        }
+
+        return $migrations;
+    }
+
+    /**
+     * Clean old estimator migrations
+     */
+    protected function cleanOldMigrations(array $migrations): bool
+    {
+        try {
+            foreach ($migrations as $migration) {
+                File::delete($migration);
+                $this->components->info('Removed: '.basename($migration));
+            }
+            return true;
+        } catch (\Exception $e) {
+            $this->components->error('Failed to remove migrations: '.$e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Validate that migrations use the correct config path
+     */
+    protected function validateMigrations(): void
+    {
+        $migrationPath = database_path('migrations');
+        $files = File::glob($migrationPath.'/*create_estimator_*.php');
+        $hasOldPath = false;
+
+        foreach ($files as $file) {
+            $content = File::get($file);
+
+            // Check for old config path
+            if (str_contains($content, 'sabhero-estimator.database.table_prefix')) {
+                $hasOldPath = true;
+                $this->components->warn('Migration uses old config path: '.basename($file));
+            }
+        }
+
+        if ($hasOldPath) {
+            $this->components->warn('⚠️  Some migrations use the old config path (database.table_prefix).');
+            $this->components->warn('⚠️  The current config uses the new path (table.prefix).');
+            $this->components->info('Run with --fresh --force to clean up and republish migrations.');
+        }
     }
 }

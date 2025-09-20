@@ -7,15 +7,6 @@
 
 A comprehensive painting project estimator package for Laravel applications. This package provides a complete solution for collecting project details, calculating estimates, and managing painting project quotes with support for both interior and exterior projects.
 
-**Key Features:**
-- 🎨 Multi-step Livewire wizard for project estimation
-- 🏠 Support for both interior and exterior projects
-- 📊 Dynamic pricing calculations with customizable multipliers
-- 🔧 FilamentPHP admin panel for managing rates and settings
-- 📱 Responsive design with Tailwind CSS
-- 🚀 FuelForms API integration for lead management
-- ⚙️ Highly configurable with environment-based settings
-
 ## Installation
 
 Install the package via Composer:

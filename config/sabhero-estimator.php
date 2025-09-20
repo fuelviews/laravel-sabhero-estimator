@@ -24,8 +24,8 @@ return [
     |
     */
     'form_endpoints' => [
-        'production_url' => 'https://api.fuelforms.com/estimator',
-        'development_url' => 'https://dev-api.fuelforms.com/estimator',
+        'production_url' => config('forms.forms.free_estimate.production_url'),
+        'development_url' => config('forms.forms.free_estimate.development_url'),
     ],
 
     /*
