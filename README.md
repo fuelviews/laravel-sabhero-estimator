@@ -7,36 +7,51 @@
 
 A comprehensive painting project estimator package for Laravel applications. This package provides a complete solution for collecting project details, calculating estimates, and managing painting project quotes with support for both interior and exterior projects.
 
+## Features
+
+- 🎨 **Multi-step Livewire Component** - Interactive estimation wizard
+- 📊 **Intelligent Calculations** - Separate logic for interior/exterior projects
+- 🛠️ **FilamentPHP Admin Panel** - Complete management interface
+- 📱 **Responsive Design** - Mobile-friendly estimation forms
+- 🔧 **Configurable** - Customizable rates, multipliers, and settings
+- 📤 **Form Submission** - External API integration for lead management
+- 🗃️ **Database Storage** - Persistent project and configuration data
+
 ## Installation
 
-Install the package via Composer:
+### Quick Installation (Recommended)
 
 ```bash
 composer require fuelviews/laravel-sabhero-estimator
-```
-
-Run the installation command (recommended):
-
-```bash
 php artisan sab-hero-estimator:install
 ```
 
-This will:
-- Publish the configuration file
-- Publish and run migrations
-- Seed default data (rates, multipliers, settings)
-- Optionally publish views for customization
+The install command provides several options:
 
-## Manual Installation
+```bash
+# Clean installation (removes old migrations before publishing new ones)
+php artisan sab-hero-estimator:install --fresh --force
 
-If you prefer manual installation:
+# Install with automatic seeding
+php artisan sab-hero-estimator:install --seed
+
+# Force overwrite existing files
+php artisan sab-hero-estimator:install --force
+
+# Silent installation for automation
+php artisan sab-hero-estimator:install --fresh --force --no-interaction
+```
+
+### Manual Installation
+
+If you prefer manual control:
 
 ```bash
 # Publish config
 php artisan vendor:publish --tag="sabhero-estimator-config"
 
-# Publish migrations
-php artisan vendor:publish --tag="sabhero-estimator-migrations"
+# Publish migrations (with --force to overwrite existing)
+php artisan vendor:publish --tag="sabhero-estimator-migrations" --force
 
 # Run migrations
 php artisan migrate
@@ -44,20 +59,63 @@ php artisan migrate
 # Seed default data
 php artisan sab-hero-estimator:seed
 
-# Publish views (optional)
+# Publish views (optional, for customization)
 php artisan vendor:publish --tag="sabhero-estimator-views"
 ```
 
 ## Configuration
 
-Add these environment variables to your `.env` file:
+The package publishes a configuration file at `config/sabhero-estimator.php`:
 
+```php
+<?php
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Table Configuration
+    |--------------------------------------------------------------------------
+    */
+    'table' => [
+        'prefix' => 'estimator_', // Customize table name prefix
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Form Submission Endpoints
+    |--------------------------------------------------------------------------
+    */
+    'form_endpoints' => [
+        'production_url' => 'https://api.fuelforms.com/estimator',
+        'development_url' => 'https://dev-api.fuelforms.com/estimator',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Calculation Defaults
+    |--------------------------------------------------------------------------
+    */
+    'defaults' => [
+        'currency_symbol' => '$',
+        'decimal_places' => 2,
+    ],
+];
 ```
+
+### Cross-Config References
+
+You can reference other config files within the estimator config:
+
+```php
+'form_endpoints' => [
+    'production_url' => config('forms.forms.free_estimate.production_url'),
+    'development_url' => config('forms.forms.free_estimate.development_url'),
+],
 ```
 
 ## Usage
 
-### Basic Usage
+### Basic Implementation
 
 Add the Livewire component to any Blade template:
 
@@ -65,9 +123,40 @@ Add the Livewire component to any Blade template:
 @livewire('estimator::project-estimator')
 ```
 
+The component provides a complete multi-step estimation process:
+1. **Welcome** - Introduction and project type selection
+2. **Contact Info** - Customer details and project type
+3. **Measurements** - Project-specific measurements and options
+4. **Review** - Final estimate display and submission
+
+### API Access
+
+The package provides a consolidated API through the main class:
+
+```php
+use Fuelviews\SabHeroEstimator\SabHeroEstimator;
+
+$estimator = app(SabHeroEstimator::class);
+
+// Get available surface types for a project
+$surfaces = $estimator->getSurfaceTypes('interior', 'partial');
+
+// Get house styles with images
+$houseStyles = $estimator->getHouseStyles();
+
+// Get multipliers by category
+$floorOptions = $estimator->getFloorOptions();
+$paintConditions = $estimator->getPaintConditionOptions();
+$coverageOptions = $estimator->getCoverageOptions();
+
+// Manage settings
+$deviationPercentage = $estimator->getDeviationPercentage();
+$estimator->setSetting('key', 'value');
+```
+
 ### User Model Integration
 
-Add the trait to your User model to associate projects:
+Add the trait to your User model to associate projects with users:
 
 ```php
 use Fuelviews\SabHeroEstimator\Traits\HasEstimatorProjects;
@@ -77,87 +166,153 @@ class User extends Authenticatable
     use HasEstimatorProjects;
 }
 
-// Now you can access user projects
-$user->estimatorProjects;
-$user->interiorProjects;
-$user->exteriorProjects;
-$user->recentEstimatorProjects(10);
+// Access user's estimation projects
+$user->estimatorProjects;           // All projects
+$user->interiorProjects;            // Interior projects only
+$user->exteriorProjects;            // Exterior projects only
+$user->recentEstimatorProjects(10); // Recent projects with limit
 ```
 
-### Custom Calculations
-
-Implement your own calculation logic:
-
-```php
-use Fuelviews\SabHeroEstimator\Contracts\EstimatorCalculator;
-
-class CustomCalculator implements EstimatorCalculator
-{
-    public function calculate(array $data): array
-    {
-        // Your custom calculation logic
-        return [
-            'low' => 1000.00,
-            'high' => 1500.00
-        ];
-    }
-}
-
-// In your service provider
-$this->app->bind(EstimatorCalculator::class, CustomCalculator::class);
-```
-
-### Accessing Data
+### Data Access
 
 ```php
 use Fuelviews\SabHeroEstimator\Models\Project;
+use Fuelviews\SabHeroEstimator\Models\Rate;
+use Fuelviews\SabHeroEstimator\Models\Multiplier;
 
-// Get all projects
+// Get all projects with relationships
 $projects = Project::with(['areas.surfaces'])->latest()->get();
 
-// Get interior projects only
-$interiorProjects = Project::interior()->get();
+// Get projects by type
+$interiorProjects = Project::where('project_type', 'interior')->get();
 
-// Get projects with specific estimate range
-$highValueProjects = Project::where('estimated_high', '>', 5000)->get();
+// Get high-value projects
+$premiumProjects = Project::where('estimated_high', '>', 5000)->get();
+
+// Access rates and multipliers
+$rates = Rate::where('project_type', 'interior')->get();
+$houseStyles = Multiplier::houseStyle()->get();
 ```
 
-## Admin Panel (Filament)
+## FilamentPHP Admin Panel
 
-The package includes a complete Filament admin panel for managing:
+The package includes comprehensive admin resources:
 
-- **Projects**: View submitted estimates and customer details
-- **Rates**: Manage pricing for different surface types
-- **Multipliers**: Configure house styles, floors, conditions, coverage, and extras
-- **Settings**: Customize form labels and default values
+### Resources Included
+- **Projects** - View and manage submitted estimates
+- **Rates** - Configure pricing for different surface types
+- **Multipliers** - Manage house styles, floors, conditions, coverage, and extras
+- **Settings** - Customize deviation percentage and other defaults
 
-Access via your Filament admin panel under the "Estimator" navigation group.
+### Setup
+Register the plugin in your FilamentPHP panel provider:
 
-## Package Structure
+```php
+use Fuelviews\SabHeroEstimator\Filament\EstimatorPlugin;
 
-The package includes:
-
-- **Models**: Project, Area, Surface, Rate, Multiplier, Setting
-- **Livewire Component**: Multi-step estimation wizard
-- **Filament Resources**: Complete admin interface
-- **Services**: Calculation and form submission logic
-- **Commands**: Installation and seeding utilities
-- **Migrations**: Database schema with configurable table prefixes
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ... other configuration
+        ->plugins([
+            EstimatorPlugin::make(),
+        ]);
+}
+```
 
 ## Calculation Logic
 
 ### Interior Projects
 
-- **Full Interior**: Base rate × total square footage × (1 + sum of selected extras)
-- **Partial Interior**: Sum of (surface area/quantity × surface rate) for each surface
+**Full Interior Calculation:**
+```
+Base Cost = Total Square Footage × Interior Rate
+Extras = Sum of selected interior extras (as multipliers)
+Final Cost = Base Cost × (1 + Extras)
+```
+
+**Partial Interior Calculation:**
+```
+Cost = Sum of (Surface Area × Surface Rate) for each surface
+```
 
 ### Exterior Projects
 
-- **Base Cost**: Total square footage × exterior rate
-- **Multipliers**: Applied additively for house style, floors, and condition
-- **Coverage**: Applied multiplicatively (e.g., 75% = 0.75 multiplier)
+**Exterior Calculation:**
+```
+Base Cost = Total Square Footage × Exterior Rate
+House Style Multiplier = Applied additively
+Floor Multiplier = Applied additively
+Condition Multiplier = Applied additively
+Coverage Multiplier = Applied multiplicatively (e.g., 75% coverage = ×0.75)
 
-Final estimate includes configurable deviation percentage for low/high range.
+Final Cost = ((Base Cost + Additive Multipliers) × Coverage Multiplier)
+```
+
+### Estimate Ranges
+
+All estimates include a configurable deviation percentage for low/high ranges:
+```
+Low Estimate = Final Cost × (1 - Deviation %)
+High Estimate = Final Cost × (1 + Deviation %)
+```
+
+## Troubleshooting
+
+### Migration Issues
+
+If you encounter table creation issues:
+
+```bash
+# Clean install with fresh migrations
+php artisan sab-hero-estimator:install --fresh --force
+
+# Check migration status
+php artisan migrate:status | grep estimator
+```
+
+### Config Path Issues
+
+If you see errors about missing config paths, ensure you're using the correct structure:
+
+- ✅ **Correct**: `config('sabhero-estimator.table.prefix')`
+- ❌ **Incorrect**: `config('sabhero-estimator.database.table_prefix')`
+
+### Table Not Found Errors
+
+This usually indicates migrations weren't run properly:
+
+1. Check if tables exist: `php artisan tinker --execute="DB::table('estimator_multipliers')->count()"`
+2. If not found, run: `php artisan sab-hero-estimator:install --fresh --force`
+
+### Form Submission Issues
+
+Verify your form endpoints configuration and ensure external APIs are accessible.
+
+## Package Structure
+
+```
+src/
+├── Commands/           # Installation and seeding commands
+├── Contracts/          # Interface definitions
+├── Filament/          # Admin panel resources
+├── Http/Livewire/     # Livewire components
+├── Models/            # Eloquent models
+├── Services/          # Business logic services
+├── Traits/            # Reusable traits
+└── SabHeroEstimator.php # Main package class
+```
+
+## Database Schema
+
+The package creates these tables (with configurable prefix):
+
+- `estimator_projects` - Main project records
+- `estimator_areas` - Project areas (for partial interior)
+- `estimator_surfaces` - Surface details within areas
+- `estimator_rates` - Pricing rates for surface types
+- `estimator_multipliers` - Calculation multipliers
+- `estimator_settings` - Package configuration
 
 ## Testing
 
@@ -180,8 +335,8 @@ Please review [our security policy](../../security/policy) on how to report secu
 ## Credits
 
 - [Sweatybreeze](https://github.com/sweatybreeze)
-- [Thejmitchener](https://github.com/fuelviews)
-- [Fuelviews](htt[s://fuelviews.com])
+- [Thejmitchener](https://github.com/thejmitchener)
+- [Fuelviews](https://fuelviews.com)
 - [All Contributors](../../contributors)
 
 ## License
