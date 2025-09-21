@@ -86,8 +86,8 @@ return [
     |--------------------------------------------------------------------------
     */
     'form_endpoints' => [
-        'production_url' => 'https://api.fuelforms.com/estimator',
-        'development_url' => 'https://dev-api.fuelforms.com/estimator',
+        'production_url' => config('forms.forms.free_estimate.production_url') ?: '',
+        'development_url' => config('forms.forms.free_estimate.development_url') ?: '',
     ],
 
     /*
@@ -100,17 +100,6 @@ return [
         'decimal_places' => 2,
     ],
 ];
-```
-
-### Cross-Config References
-
-You can reference other config files within the estimator config:
-
-```php
-'form_endpoints' => [
-    'production_url' => config('forms.forms.free_estimate.production_url'),
-    'development_url' => config('forms.forms.free_estimate.development_url'),
-],
 ```
 
 ## Usage
