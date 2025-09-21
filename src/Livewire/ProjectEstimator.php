@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuelviews\SabHeroEstimator\Http\Livewire;
+namespace Fuelviews\SabHeroEstimator\Livewire;
 
 use Fuelviews\SabHeroEstimator\Models\Area;
 use Fuelviews\SabHeroEstimator\Models\Multiplier;

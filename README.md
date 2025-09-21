@@ -277,7 +277,7 @@ src/
 ├── Commands/           # Installation and seeding commands
 ├── Contracts/          # Interface definitions
 ├── Filament/          # Admin panel resources
-├── Http/Livewire/     # Livewire components
+├── Livewire/          # Livewire components
 ├── Models/            # Eloquent models
 ├── Services/          # Business logic services
 └── SabHeroEstimator.php # Main package class
