@@ -2,7 +2,11 @@
 
 namespace Fuelviews\SabHeroEstimator;
 
-use Fuelviews\SabHeroEstimator\Commands\SabHeroEstimatorCommand;
+use Fuelviews\SabHeroEstimator\Commands\InstallCommand;
+use Fuelviews\SabHeroEstimator\Commands\SeedCommand;
+use Fuelviews\SabHeroEstimator\Livewire\ProjectEstimator;
+use Livewire\Livewire;
+use Spatie\LaravelPackageTools\Commands\InstallCommand as SpatieInstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -10,16 +14,59 @@ class SabHeroEstimatorServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
         $package
             ->name('laravel-sabhero-estimator')
             ->hasConfigFile()
             ->hasViews()
-            ->hasMigration('create_laravel_sabhero_estimator_table')
-            ->hasCommand(SabHeroEstimatorCommand::class);
+            ->hasMigrations([
+                'create_estimator_rates_table',
+                'create_estimator_projects_table',
+                'create_estimator_areas_table',
+                'create_estimator_surfaces_table',
+                'create_estimator_settings_table',
+                'create_estimator_multipliers_table',
+            ])
+            ->hasCommands([
+                InstallCommand::class,
+                SeedCommand::class,
+            ])
+            ->hasInstallCommand(function (SpatieInstallCommand $command) {
+                $command
+                    ->publishConfigFile()
+                    ->publishMigrations()
+                    ->askToRunMigrations()
+                    ->copyAndRegisterServiceProviderInApp();
+            });
+    }
+
+    public function packageRegistered(): void
+    {
+        // Register singleton services
+        $this->app->singleton('estimator', function () {
+            return new SabHeroEstimator;
+        });
+
+        // Register contracts
+        $this->app->bind(
+            \Fuelviews\SabHeroEstimator\Contracts\EstimatorCalculator::class,
+            \Fuelviews\SabHeroEstimator\Services\CalculationService::class
+        );
+    }
+
+    public function packageBooted(): void
+    {
+        // Register Livewire components
+        if (class_exists(Livewire::class)) {
+            Livewire::component('estimator::project-estimator', ProjectEstimator::class);
+        }
+
+        // Filament plugin is registered directly in the AdminPanelProvider
+
+        // Routes not needed - estimator is used as embedded Livewire component
+
+        // Publish seeders
+        $this->publishes([
+            __DIR__.'/../database/seeders' => database_path('seeders'),
+        ], 'sabhero-estimator-seeders');
     }
 }
