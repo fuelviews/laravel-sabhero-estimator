@@ -109,6 +109,32 @@ The component provides a complete multi-step estimation process:
 3. **Measurements** - Project-specific measurements and options
 4. **Review** - Final estimate display and submission
 
+## FilamentPHP Admin Panel
+
+The package includes comprehensive admin resources:
+
+### Resources Included
+- **Projects** - View and manage submitted estimates
+- **Rates** - Configure pricing for different surface types
+- **Multipliers** - Manage house styles, floors, conditions, coverage, and extras
+- **Settings** - Customize deviation percentage and other defaults
+
+### Setup
+Register the plugin in your FilamentPHP panel provider:
+
+```php
+use Fuelviews\SabHeroEstimator\Filament\EstimatorPlugin;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ... other configuration
+        ->plugins([
+            EstimatorPlugin::make(),
+        ]);
+}
+```
+
 ### API Access
 
 The package provides a consolidated API through the main class:
@@ -153,32 +179,6 @@ $premiumProjects = Project::where('estimated_high', '>', 5000)->get();
 // Access rates and multipliers
 $rates = Rate::where('project_type', 'interior')->get();
 $houseStyles = Multiplier::houseStyle()->get();
-```
-
-## FilamentPHP Admin Panel
-
-The package includes comprehensive admin resources:
-
-### Resources Included
-- **Projects** - View and manage submitted estimates
-- **Rates** - Configure pricing for different surface types
-- **Multipliers** - Manage house styles, floors, conditions, coverage, and extras
-- **Settings** - Customize deviation percentage and other defaults
-
-### Setup
-Register the plugin in your FilamentPHP panel provider:
-
-```php
-use Fuelviews\SabHeroEstimator\Filament\EstimatorPlugin;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ... other configuration
-        ->plugins([
-            EstimatorPlugin::make(),
-        ]);
-}
 ```
 
 ## Calculation Logic
