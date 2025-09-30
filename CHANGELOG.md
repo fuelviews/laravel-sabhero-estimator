@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-sabhero-estimator` will be documented in this file.
 
+## v0.0.3 - 2025-09-30
+
+### What's Changed
+
+* Refactor seeders to migrations disk config and readme by @thejmitchener in https://github.com/fuelviews/laravel-sabhero-estimator/pull/9
+
+**Full Changelog**: https://github.com/fuelviews/laravel-sabhero-estimator/compare/v0.0.2...v0.0.3
+
 ## v0.0.2 - 2025-09-30
 
 ### What's Changed
