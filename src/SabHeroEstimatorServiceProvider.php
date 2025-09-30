@@ -14,7 +14,7 @@ class SabHeroEstimatorServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('laravel-sabhero-estimator')
+            ->name('sabhero-estimator')
             ->hasConfigFile()
             ->hasViews()
             ->hasMigrations([
@@ -27,7 +27,6 @@ class SabHeroEstimatorServiceProvider extends PackageServiceProvider
                 'populate_estimator_rates_defaults',
                 'populate_estimator_multipliers_defaults',
                 'populate_estimator_settings_defaults',
-                'fix_estimator_multiplier_image_paths',
             ])
             ->hasCommands([
                 InstallCommand::class,
