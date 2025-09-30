@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class InstallCommand extends Command
 {
-    protected $signature = 'sab-hero-estimator:install
+    protected $signature = 'sabhero-estimator:install
                             {--force : Force overwrite of existing files (config, migrations, etc.)}
                             {--fresh : Remove old estimator migrations before publishing new ones}';
 
@@ -70,27 +70,9 @@ class InstallCommand extends Command
             });
         }
 
-        // Publish assets (images) to configured disk
-        $this->components->task('Publishing assets to configured disk', function () {
-            return $this->publishImagesToDisk();
-        });
-
         $this->components->info('SAB Hero Estimator installed successfully!');
 
-        // Display next steps
-        $this->displayNextSteps();
-
         return self::SUCCESS;
-    }
-
-    protected function displayNextSteps(): void
-    {
-        $this->components->bulletList([
-            'Add package views to your Tailwind config: <fg=yellow>\'./vendor/fuelviews/laravel-sabhero-estimator/resources/**/*.blade.php\'</fg>',
-            'Add the Livewire component to your blade template: <fg=yellow>@livewire(\'estimator::project-estimator\')</fg>',
-            'Register the Filament plugin to access admin resources',
-            'Review the published config file: <fg=yellow>config/sabhero-estimator.php</fg>',
-        ]);
     }
 
     /**
