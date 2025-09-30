@@ -40,6 +40,7 @@ class InstallCommand extends Command
             // Only publish if config doesn't exist, regardless of --force flag
             if (File::exists($configFile)) {
                 $this->components->info('Config file already exists, skipping to preserve your settings');
+
                 return true;
             }
 
@@ -165,8 +166,9 @@ class InstallCommand extends Command
             // Source images from package
             $sourceDir = __DIR__ . '/../../resources/images';
 
-            if (!File::exists($sourceDir)) {
+            if (! File::exists($sourceDir)) {
                 $this->components->error('Source images directory not found');
+
                 return false;
             }
 
@@ -178,8 +180,9 @@ class InstallCommand extends Command
                 $contents = File::get($file->getPathname());
 
                 // Check if file exists and force option
-                if (!$this->option('force') && Storage::disk($disk)->exists($targetPath . '/' . $filename)) {
+                if (! $this->option('force') && Storage::disk($disk)->exists($targetPath . '/' . $filename)) {
                     $this->components->info('Skipping existing file: ' . $filename);
+
                     continue;
                 }
 
@@ -194,13 +197,14 @@ class InstallCommand extends Command
             $this->components->info("Published {$count} images to disk: {$disk}");
 
             // If using public disk, remind about storage:link
-            if ($disk === 'public' && !File::exists(public_path('storage'))) {
+            if ($disk === 'public' && ! File::exists(public_path('storage'))) {
                 $this->components->warn('Remember to run: php artisan storage:link');
             }
 
             return true;
         } catch (\Exception $e) {
             $this->components->error('Failed to publish images: ' . $e->getMessage());
+
             return false;
         }
     }

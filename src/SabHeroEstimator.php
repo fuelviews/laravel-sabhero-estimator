@@ -54,6 +54,7 @@ class SabHeroEstimator
                 if ($style->image) {
                     $style->image = $this->getImageUrl('sabhero-estimator/images/' . basename($style->image));
                 }
+
                 return $style;
             })
             ->toArray();
