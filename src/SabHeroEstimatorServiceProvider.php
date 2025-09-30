@@ -4,8 +4,6 @@ namespace Fuelviews\SabHeroEstimator;
 
 use Fuelviews\SabHeroEstimator\Commands\InstallCommand;
 use Fuelviews\SabHeroEstimator\Livewire\ProjectEstimator;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Commands\InstallCommand as SpatieInstallCommand;
 use Spatie\LaravelPackageTools\Package;
