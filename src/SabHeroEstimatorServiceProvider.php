@@ -64,10 +64,6 @@ class SabHeroEstimatorServiceProvider extends PackageServiceProvider
         if (class_exists(Livewire::class)) {
             Livewire::component('estimator::project-estimator', ProjectEstimator::class);
         }
-
-        // Filament plugin is registered directly in the AdminPanelProvider
-
-        // Routes not needed - estimator is used as embedded Livewire component
     }
 
 }
