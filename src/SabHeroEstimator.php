@@ -46,19 +46,10 @@ class SabHeroEstimator
      */
     public function getHouseStyles(): array
     {
-        $styles = Multiplier::houseStyle()
+        return Multiplier::houseStyle()
             ->distinct()
             ->get(['key', 'image'])
-            ->map(function ($style) {
-                // Convert the image filename to full disk path
-                if ($style->image) {
-                    $style->image = $this->getImageUrl('sabhero-estimator/images/' . basename($style->image));
-                }
-                return $style;
-            })
             ->toArray();
-
-        return $styles;
     }
 
     /**
@@ -160,7 +151,7 @@ class SabHeroEstimator
     {
         $sourceDir = __DIR__.'/../resources/images';
         $disk = config('sabhero-estimator.media.disk', 'public');
-        $path = 'sabhero-estimator/images';
+        $path = 'estimator/images';
 
         if (! file_exists($sourceDir)) {
             return false;
