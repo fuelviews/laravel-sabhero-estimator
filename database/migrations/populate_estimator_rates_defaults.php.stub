@@ -1,0 +1,81 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        $tablePrefix = config('sabhero-estimator.table.prefix');
+
+        $rates = [
+            [
+                'surface_type' => 'interior_wall',
+                'rate' => 2.50,
+                'input_type' => 'measurement',
+                'project_type' => 'interior',
+                'description' => 'Interior wall painting per sq ft',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'surface_type' => 'door',
+                'rate' => 45.00,
+                'input_type' => 'quantity',
+                'project_type' => 'interior',
+                'description' => 'Interior door painting per door',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'surface_type' => 'window',
+                'rate' => 25.00,
+                'input_type' => 'quantity',
+                'project_type' => 'interior',
+                'description' => 'Interior window painting per window',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'surface_type' => 'interior_full_base',
+                'rate' => 3.00,
+                'input_type' => 'measurement',
+                'project_type' => 'interior',
+                'description' => 'Full interior base rate per sq ft',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'surface_type' => 'exterior',
+                'rate' => 4.00,
+                'input_type' => 'measurement',
+                'project_type' => 'exterior',
+                'description' => 'Exterior painting base rate per sq ft',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ];
+
+        foreach ($rates as $rate) {
+            DB::table($tablePrefix . 'rates')->insertOrIgnore($rate);
+        }
+    }
+
+    public function down(): void
+    {
+        $tablePrefix = config('sabhero-estimator.table.prefix');
+
+        $defaultSurfaceTypes = [
+            'interior_wall',
+            'door',
+            'window',
+            'interior_full_base',
+            'exterior',
+        ];
+
+        DB::table($tablePrefix . 'rates')
+            ->whereIn('surface_type', $defaultSurfaceTypes)
+            ->delete();
+    }
+};
