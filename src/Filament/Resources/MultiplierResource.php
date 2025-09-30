@@ -4,7 +4,6 @@ namespace Fuelviews\SabHeroEstimator\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
@@ -37,7 +36,6 @@ class MultiplierResource extends Resource
     {
         return config('sabhero-estimator.media.disk');
     }
-
 
     public static function form(Form $form): Form
     {
