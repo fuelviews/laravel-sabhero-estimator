@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-sabhero-estimator` will be documented in this file.
 
+## v0.0.4 - 2025-09-30
+
+### What's Changed
+
+* Refactor part 2 by @thejmitchener in https://github.com/fuelviews/laravel-sabhero-estimator/pull/10
+
+**Full Changelog**: https://github.com/fuelviews/laravel-sabhero-estimator/compare/v0.0.3...v0.0.4
+
 ## v0.0.3 - 2025-09-30
 
 ### What's Changed

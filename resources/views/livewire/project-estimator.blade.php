@@ -245,9 +245,14 @@
                 <div class="border-2 rounded h-40 flex flex-col items-center justify-between {{ $house_style === $style['key'] ? 'border-blue-500' : 'border-gray-300' }} p-0">
                     <div class="w-full h-28 overflow-hidden">
                         @if(!empty($style['image']))
-                            <img {{ glide()->src($style['image'], 300) }}
+                            @php
+                                $disk = config('sabhero-estimator.media.disk');
+                                $imagePath = $style['image'];
+                                $imageUrl = \Illuminate\Support\Facades\Storage::disk($disk)->url($imagePath);
+                            @endphp
+                            <img src="{{ $imageUrl }}"
                                  alt="{{ $style['key'] }}"
-                                 class="w-full h-full object-cover">
+                                 class="w-full h-28 object-cover">
                         @else
                             <div class="w-full h-full flex items-center justify-center bg-gray-200">
                                 <!-- Heroicons Outline Home Icon -->
