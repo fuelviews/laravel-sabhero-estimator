@@ -3,18 +3,48 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 return new class extends Migration
 {
     protected function getImagePath(string $filename): string
     {
-        // Store only the filename, the path will be handled by the application
-        return $filename;
+        // Store the full path relative to the disk root
+        // This ensures consistency across different disk configurations
+        return 'sabhero-estimator/images/' . $filename;
+    }
+
+    protected function copyImagesToDisk(): void
+    {
+        $disk = config('sabhero-estimator.media.disk', 'public');
+        $targetPath = 'sabhero-estimator/images';
+
+        // Source images from package
+        $sourceDir = __DIR__ . '/../../resources/images';
+
+        if (!File::exists($sourceDir)) {
+            return;
+        }
+
+        $files = File::files($sourceDir);
+        foreach ($files as $file) {
+            $filename = $file->getFilename();
+            $contents = File::get($file->getPathname());
+
+            // Copy to configured disk
+            Storage::disk($disk)->put(
+                $targetPath . '/' . $filename,
+                $contents
+            );
+        }
     }
 
     public function up(): void
     {
         $tablePrefix = config('sabhero-estimator.table.prefix');
+
+        // First, copy images to the configured disk
+        $this->copyImagesToDisk();
 
         $multipliers = [
             // House styles
@@ -193,5 +223,14 @@ return new class extends Migration
         DB::table($tablePrefix . 'multipliers')
             ->whereIn('category', $defaultCategories)
             ->delete();
+
+        // Optionally clean up images from disk
+        $disk = config('sabhero-estimator.media.disk', 'public');
+        $targetPath = 'sabhero-estimator/images';
+
+        // Only delete if the directory exists
+        if (Storage::disk($disk)->exists($targetPath)) {
+            Storage::disk($disk)->deleteDirectory($targetPath);
+        }
     }
 };

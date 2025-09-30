@@ -68,47 +68,6 @@ class SabHeroEstimatorServiceProvider extends PackageServiceProvider
         // Filament plugin is registered directly in the AdminPanelProvider
 
         // Routes not needed - estimator is used as embedded Livewire component
-
-        // Publish images to configured disk
-        $this->publishImagesToDisk();
     }
 
-    protected function publishImagesToDisk(): void
-    {
-        // Publish command to copy images to configured disk
-        $this->publishes([
-            __DIR__.'/../resources/images' => $this->getImagePublishPath(),
-        ], 'sabhero-estimator-assets');
-
-        // Also register a command to copy images during install
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                // Images are copied via the vendor:publish command
-            ]);
-        }
-    }
-
-    protected function getImagePublishPath(): string
-    {
-        $disk = config('sabhero-estimator.media.disk', 'public');
-        $path = 'estimator/images';
-
-        // If using public disk, return the public path
-        if ($disk === 'public') {
-            return public_path($path);
-        }
-
-        // For other disks, use the disk's root path
-        try {
-            $diskConfig = config("filesystems.disks.{$disk}");
-            if ($diskConfig && isset($diskConfig['root'])) {
-                return rtrim($diskConfig['root'], '/') . '/' . ltrim($path, '/');
-            }
-        } catch (\Exception $e) {
-            // Fall back to public path if disk config is not found
-        }
-
-        // Default fallback to public path
-        return public_path($path);
-    }
 }

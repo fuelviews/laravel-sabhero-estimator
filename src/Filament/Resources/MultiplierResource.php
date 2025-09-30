@@ -4,13 +4,13 @@ namespace Fuelviews\SabHeroEstimator\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Fuelviews\SabHeroEstimator\Filament\Resources\MultiplierResource\Pages;
 use Fuelviews\SabHeroEstimator\Models\Multiplier;
-use Illuminate\Database\Eloquent\Builder;
 
 class MultiplierResource extends Resource
 {
@@ -33,11 +33,11 @@ class MultiplierResource extends Resource
         ];
     }
 
-    // Filter out records with category "house_style"
-    public static function getEloquentQuery(): Builder
+    protected static function getConfiguredDisk(): string
     {
-        return parent::getEloquentQuery()->where('category', '!=', 'house_style');
+        return config('sabhero-estimator.media.disk');
     }
+
 
     public static function form(Form $form): Form
     {
@@ -45,7 +45,9 @@ class MultiplierResource extends Resource
             Forms\Components\Select::make('category')
                 ->label('Category')
                 ->options(self::categoryOptions())
-                ->required(),
+                ->required()
+                ->reactive()
+                ->live(),
 
             Forms\Components\TextInput::make('key')
                 ->label('Key / Slug')
@@ -59,9 +61,12 @@ class MultiplierResource extends Resource
                 ->step(0.01),
 
             Forms\Components\FileUpload::make('image')
-                ->label('Image (Optional)')
+                ->label('Image (Optional - House Styles Only)')
                 ->image()
-                ->directory('estimator/multipliers'),
+                ->disk(static::getConfiguredDisk())
+                ->directory('sabhero-estimator/images')
+                ->visibility('public')
+                ->visible(fn (Forms\Get $get) => $get('category') === 'house_style'),
         ]);
     }
 
@@ -85,6 +90,7 @@ class MultiplierResource extends Resource
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Image')
                     ->circular()
+                    ->disk(static::getConfiguredDisk())
                     ->defaultImageUrl(fn () => null),
             ])
             ->filters([
