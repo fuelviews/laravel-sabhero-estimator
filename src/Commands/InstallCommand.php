@@ -4,6 +4,7 @@ namespace Fuelviews\SabHeroEstimator\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class InstallCommand extends Command
 {
@@ -32,12 +33,20 @@ class InstallCommand extends Command
             }
         }
 
-        // Publish config
+        // Publish config (never force overwrite to preserve user settings)
         $this->components->task('Publishing configuration', function () {
+            $configFile = config_path('sabhero-estimator.php');
+
+            // Only publish if config doesn't exist, regardless of --force flag
+            if (File::exists($configFile)) {
+                $this->components->info('Config file already exists, skipping to preserve your settings');
+
+                return true;
+            }
+
             return $this->callSilent('vendor:publish', [
                 '--provider' => 'Fuelviews\SabHeroEstimator\SabHeroEstimatorServiceProvider',
                 '--tag' => 'sabhero-estimator-config',
-                '--force' => $this->option('force'),
             ]) === 0;
         });
 
@@ -61,28 +70,12 @@ class InstallCommand extends Command
             });
         }
 
-        // Publish assets (images)
-        $this->components->task('Publishing assets (images)', function () {
-            return $this->callSilent('vendor:publish', [
-                '--provider' => 'Fuelviews\SabHeroEstimator\SabHeroEstimatorServiceProvider',
-                '--tag' => 'sabhero-estimator-assets',
-                '--force' => $this->option('force'),
-            ]) === 0;
+        // Publish assets (images) to configured disk
+        $this->components->task('Publishing assets to configured disk', function () {
+            return $this->publishImagesToDisk();
         });
 
-        // Publish views (optional)
-        $publishViews = $this->components->confirm('Would you like to publish the views for customization?', false);
-        if ($publishViews) {
-            $this->components->task('Publishing views', function () {
-                return $this->callSilent('vendor:publish', [
-                    '--provider' => 'Fuelviews\SabHeroEstimator\SabHeroEstimatorServiceProvider',
-                    '--tag' => 'sabhero-estimator-views',
-                    '--force' => $this->option('force'),
-                ]) === 0;
-            });
-        }
-
-        $this->components->info('Sab Hero Estimator installed successfully!');
+        $this->components->info('SAB Hero Estimator installed successfully!');
 
         // Display next steps
         $this->displayNextSteps();
@@ -158,6 +151,61 @@ class InstallCommand extends Command
 
         if (count($dataMigrations) < 3) {
             $this->components->info('Note: Default data migrations will be created. Found '.count($dataMigrations).' data migrations.');
+        }
+    }
+
+    /**
+     * Publish images directly to configured disk
+     */
+    protected function publishImagesToDisk(): bool
+    {
+        try {
+            $disk = config('sabhero-estimator.media.disk');
+            $targetPath = 'sabhero-estimator/images';
+
+            // Source images from package
+            $sourceDir = __DIR__ . '/../../resources/images';
+
+            if (! File::exists($sourceDir)) {
+                $this->components->error('Source images directory not found');
+
+                return false;
+            }
+
+            $files = File::files($sourceDir);
+            $count = 0;
+
+            foreach ($files as $file) {
+                $filename = $file->getFilename();
+                $contents = File::get($file->getPathname());
+
+                // Check if file exists and force option
+                if (! $this->option('force') && Storage::disk($disk)->exists($targetPath . '/' . $filename)) {
+                    $this->components->info('Skipping existing file: ' . $filename);
+
+                    continue;
+                }
+
+                // Copy to configured disk
+                Storage::disk($disk)->put(
+                    $targetPath . '/' . $filename,
+                    $contents
+                );
+                $count++;
+            }
+
+            $this->components->info("Published {$count} images to disk: {$disk}");
+
+            // If using public disk, remind about storage:link
+            if ($disk === 'public' && ! File::exists(public_path('storage'))) {
+                $this->components->warn('Remember to run: php artisan storage:link');
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            $this->components->error('Failed to publish images: ' . $e->getMessage());
+
+            return false;
         }
     }
 }
