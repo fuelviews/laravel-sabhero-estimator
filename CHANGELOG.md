@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-sabhero-estimator` will be documented in this file.
 
+## v0.0.2 - 2025-09-30
+
+### What's Changed
+
+* Refactor installation process to use migrations for default data seeding, add configurable media storage for house style images, update image handling to use storage disks, and improve README with detailed installation and configuration steps. by @thejmitchener in https://github.com/fuelviews/laravel-sabhero-estimator/pull/8
+
+**Full Changelog**: https://github.com/fuelviews/laravel-sabhero-estimator/compare/v0.0.1...v0.0.2
+
 ## v0.0.1 - 2025-09-21
 
 ### What's Changed

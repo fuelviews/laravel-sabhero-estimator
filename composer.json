@@ -44,9 +44,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Fuelviews\\SabHeroEstimator\\": "src/",
-            "Fuelviews\\SabHeroEstimator\\Database\\Factories\\": "database/factories/",
-            "Fuelviews\\SabHeroEstimator\\Database\\Seeders\\": "database/seeders/"
+            "Fuelviews\\SabHeroEstimator\\": "src/"
         }
     },
     "autoload-dev": {

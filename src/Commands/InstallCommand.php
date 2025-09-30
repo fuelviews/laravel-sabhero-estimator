@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\File;
 class InstallCommand extends Command
 {
     protected $signature = 'sab-hero-estimator:install
-                            {--seed : Seed the database with default data}
                             {--force : Force overwrite of existing files (config, migrations, etc.)}
                             {--fresh : Remove old estimator migrations before publishing new ones}';
 
@@ -62,12 +61,14 @@ class InstallCommand extends Command
             });
         }
 
-        // Seed default data
-        if ($this->option('seed') || $this->components->confirm('Would you like to seed the database with default estimator data?', true)) {
-            $this->components->task('Seeding default data', function () {
-                return $this->call('sab-hero-estimator:seed') === 0;
-            });
-        }
+        // Publish assets (images)
+        $this->components->task('Publishing assets (images)', function () {
+            return $this->callSilent('vendor:publish', [
+                '--provider' => 'Fuelviews\SabHeroEstimator\SabHeroEstimatorServiceProvider',
+                '--tag' => 'sabhero-estimator-assets',
+                '--force' => $this->option('force'),
+            ]) === 0;
+        });
 
         // Publish views (optional)
         $publishViews = $this->components->confirm('Would you like to publish the views for customization?', false);
@@ -92,8 +93,9 @@ class InstallCommand extends Command
     protected function displayNextSteps(): void
     {
         $this->components->bulletList([
+            'Add package views to your Tailwind config: <fg=yellow>\'./vendor/fuelviews/laravel-sabhero-estimator/resources/**/*.blade.php\'</fg>',
             'Add the Livewire component to your blade template: <fg=yellow>@livewire(\'estimator::project-estimator\')</fg>',
-            'Access the admin panel via Filament to configure rates and multipliers',
+            'Register the Filament plugin to access admin resources',
             'Review the published config file: <fg=yellow>config/sabhero-estimator.php</fg>',
         ]);
     }
@@ -110,7 +112,10 @@ class InstallCommand extends Command
             return $migrations;
         }
 
-        $files = File::glob($migrationPath.'/*create_estimator_*.php');
+        $files = array_merge(
+            File::glob($migrationPath.'/*create_estimator_*.php'),
+            File::glob($migrationPath.'/*populate_estimator_*.php')
+        );
 
         foreach ($files as $file) {
             $migrations[] = $file;
@@ -139,28 +144,20 @@ class InstallCommand extends Command
     }
 
     /**
-     * Validate that migrations use the correct config path
+     * Validate that migrations exist and are properly configured
      */
     protected function validateMigrations(): void
     {
         $migrationPath = database_path('migrations');
-        $files = File::glob($migrationPath.'/*create_estimator_*.php');
-        $hasOldPath = false;
+        $structureMigrations = File::glob($migrationPath.'/*create_estimator_*.php');
+        $dataMigrations = File::glob($migrationPath.'/*populate_estimator_*.php');
 
-        foreach ($files as $file) {
-            $content = File::get($file);
-
-            // Check for old config path
-            if (str_contains($content, 'sabhero-estimator.database.table_prefix')) {
-                $hasOldPath = true;
-                $this->components->warn('Migration uses old config path: '.basename($file));
-            }
+        if (count($structureMigrations) < 6) {
+            $this->components->warn('Some structure migrations may be missing. Expected 6, found '.count($structureMigrations));
         }
 
-        if ($hasOldPath) {
-            $this->components->warn('⚠️  Some migrations use the old config path (database.table_prefix).');
-            $this->components->warn('⚠️  The current config uses the new path (table.prefix).');
-            $this->components->info('Run with --fresh --force to clean up and republish migrations.');
+        if (count($dataMigrations) < 3) {
+            $this->components->info('Note: Default data migrations will be created. Found '.count($dataMigrations).' data migrations.');
         }
     }
 }

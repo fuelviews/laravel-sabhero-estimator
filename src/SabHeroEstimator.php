@@ -5,6 +5,7 @@ namespace Fuelviews\SabHeroEstimator;
 use Fuelviews\SabHeroEstimator\Models\Multiplier;
 use Fuelviews\SabHeroEstimator\Models\Rate;
 use Fuelviews\SabHeroEstimator\Models\Setting;
+use Illuminate\Support\Facades\Storage;
 
 class SabHeroEstimator
 {
@@ -117,5 +118,62 @@ class SabHeroEstimator
     public function getDeviationPercentage(): float
     {
         return Setting::getDeviationPercentage();
+    }
+
+    /**
+     * Get the full URL for an image stored in the configured disk
+     *
+     * @param  string|null  $imagePath  The relative path to the image
+     * @return string|null The full URL to the image or null if no path provided
+     */
+    public function getImageUrl(?string $imagePath): ?string
+    {
+        if (! $imagePath) {
+            return null;
+        }
+
+        $disk = config('sabhero-estimator.media.disk', 'public');
+
+        try {
+            return Storage::disk($disk)->url($imagePath);
+        } catch (\Exception $e) {
+            // Fall back to asset() if Storage fails
+            return asset($imagePath);
+        }
+    }
+
+    /**
+     * Copy images from package to configured disk
+     *
+     * @return bool
+     */
+    public function publishImages(): bool
+    {
+        $sourceDir = __DIR__.'/../resources/images';
+        $disk = config('sabhero-estimator.media.disk', 'public');
+        $path = 'estimator/images';
+
+        if (! file_exists($sourceDir)) {
+            return false;
+        }
+
+        $files = scandir($sourceDir);
+        foreach ($files as $file) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+
+            $sourcePath = $sourceDir . '/' . $file;
+            $targetPath = $path . '/' . $file;
+
+            if (is_file($sourcePath)) {
+                Storage::disk($disk)->put(
+                    $targetPath,
+                    file_get_contents($sourcePath)
+                );
+            }
+        }
+
+        return true;
     }
 }
