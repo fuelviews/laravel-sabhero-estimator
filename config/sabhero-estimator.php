@@ -24,8 +24,8 @@ return [
     |
     */
     'form_endpoints' => [
-        'production_url' => config('forms.forms.free_estimate.production_url') ?: '',
-        'development_url' => config('forms.forms.free_estimate.development_url') ?: '',
+        'production_url' => config('forms.forms.free_estimate.production_url'),
+        'development_url' => config('forms.forms.free_estimate.development_url'),
     ],
 
     /*
@@ -39,5 +39,18 @@ return [
     'defaults' => [
         'currency_symbol' => '$',
         'decimal_places' => 2,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Media Storage Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure the filesystem disk for storing house style images.
+    | You can use any configured Laravel filesystem disk (public, s3, etc.).
+    |
+    */
+    'media' => [
+        'disk' => 'public',
     ],
 ];

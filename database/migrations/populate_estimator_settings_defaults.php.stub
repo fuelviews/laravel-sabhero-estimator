@@ -1,0 +1,84 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        $tablePrefix = config('sabhero-estimator.table.prefix');
+
+        $settings = [
+            [
+                'key' => 'deviation_percentage',
+                'value' => '35',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'key' => 'paint_condition_label',
+                'value' => 'Condition of Existing Paint',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'key' => 'paint_condition_default_option',
+                'value' => 'Select condition',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'key' => 'coverage_label',
+                'value' => 'How much of the house is being painted?',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'key' => 'select_house_style_label',
+                'value' => 'Select House Style:',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'key' => 'number_of_floors_label',
+                'value' => 'Number of Floors',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'key' => 'number_of_floors_default_option',
+                'value' => 'Select the number of floors',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ];
+
+        foreach ($settings as $setting) {
+            DB::table($tablePrefix . 'settings')
+                ->updateOrInsert(
+                    ['key' => $setting['key']],
+                    $setting
+                );
+        }
+    }
+
+    public function down(): void
+    {
+        $tablePrefix = config('sabhero-estimator.table.prefix');
+
+        $defaultKeys = [
+            'deviation_percentage',
+            'paint_condition_label',
+            'paint_condition_default_option',
+            'coverage_label',
+            'select_house_style_label',
+            'number_of_floors_label',
+            'number_of_floors_default_option',
+        ];
+
+        DB::table($tablePrefix . 'settings')
+            ->whereIn('key', $defaultKeys)
+            ->delete();
+    }
+};
