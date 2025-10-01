@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-sabhero-estimator` will be documented in this file.
 
+## v0.0.7 - 2025-10-01
+
+### What's Changed
+
+* Rename install command class and signature to sabhero-estimator for consistency, update related references and documentation, and add asset publishing to the install process. by @thejmitchener in https://github.com/fuelviews/laravel-sabhero-estimator/pull/14
+
+**Full Changelog**: https://github.com/fuelviews/laravel-sabhero-estimator/compare/v0.0.6...v0.0.7
+
 ## v0.0.6 - 2025-09-30
 
 ### What's Changed

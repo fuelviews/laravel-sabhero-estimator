@@ -6,11 +6,11 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
-class InstallCommand extends Command
+class SabHeroEstimatorInstallCommand extends Command
 {
     protected $signature = 'sabhero-estimator:install
-                            {--force : Force overwrite of existing files (config, migrations, etc.)}
-                            {--fresh : Remove old estimator migrations before publishing new ones}';
+                            {--force : Force overwrite of existing files}
+                            {--fresh : Remove old estimator migrations}';
 
     protected $description = 'Install the Sab Hero Estimator package and optionally clean up old migrations';
 
@@ -69,6 +69,11 @@ class InstallCommand extends Command
                 return $this->callSilent('migrate') === 0;
             });
         }
+
+        // Publish assets (images) to configured disk
+        $this->components->task('Publishing assets to configured disk', function () {
+            return $this->publishImagesToDisk();
+        });
 
         $this->components->info('SAB Hero Estimator installed successfully!');
 
