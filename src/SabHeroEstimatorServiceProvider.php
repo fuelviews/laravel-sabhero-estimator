@@ -5,7 +5,6 @@ namespace Fuelviews\SabHeroEstimator;
 use Fuelviews\SabHeroEstimator\Commands\SabHeroEstimatorInstallCommand;
 use Fuelviews\SabHeroEstimator\Livewire\ProjectEstimator;
 use Livewire\Livewire;
-use Spatie\LaravelPackageTools\Commands\InstallCommand as SpatieInstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
