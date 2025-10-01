@@ -2,7 +2,7 @@
 
 namespace Fuelviews\SabHeroEstimator;
 
-use Fuelviews\SabHeroEstimator\Commands\InstallCommand;
+use Fuelviews\SabHeroEstimator\Commands\SabHeroEstimatorInstallCommand;
 use Fuelviews\SabHeroEstimator\Livewire\ProjectEstimator;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Commands\InstallCommand as SpatieInstallCommand;
@@ -29,16 +29,8 @@ class SabHeroEstimatorServiceProvider extends PackageServiceProvider
                 'populate_estimator_settings_defaults',
             ])
             ->hasCommands([
-                InstallCommand::class,
-            ])
-            ->hasInstallCommand(function (SpatieInstallCommand $command) {
-                $command
-                    ->publishConfigFile()
-                    ->publishMigrations()
-                    ->publishAssets()
-                    ->askToRunMigrations()
-                    ->copyAndRegisterServiceProviderInApp();
-            });
+                SabHeroEstimatorInstallCommand::class,
+            ]);
     }
 
     public function packageRegistered(): void
