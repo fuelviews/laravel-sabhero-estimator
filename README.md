@@ -18,7 +18,7 @@ composer require fuelviews/laravel-sabhero-estimator
 ### 2. Run Installation Command
 
 ```bash
-php artisan sab-hero-estimator:install
+php artisan sabhero-estimator:install
 ```
 
 This command will:
@@ -71,19 +71,19 @@ Add the Livewire component to any Blade template:
 ### Clean Installation
 Remove old migrations before installing:
 ```bash
-php artisan sab-hero-estimator:install --fresh
+php artisan sabhero-estimator:install --fresh
 ```
 
 ### Force Overwrite
 Overwrite existing files:
 ```bash
-php artisan sab-hero-estimator:install --force
+php artisan sabhero-estimator:install --force
 ```
 
 ### Silent Installation
 For automated deployments:
 ```bash
-php artisan sab-hero-estimator:install --fresh --force --no-interaction
+php artisan sabhero-estimator:install --fresh --force --no-interaction
 ```
 
 ### Manual Installation
@@ -216,7 +216,7 @@ php artisan vendor:publish --tag="sabhero-estimator-assets" --force
 php artisan migrate:status | grep estimator
 
 # Clean reinstall
-php artisan sab-hero-estimator:install --fresh --force
+php artisan sabhero-estimator:install --fresh --force
 ```
 
 ### Table Not Found
@@ -226,7 +226,7 @@ php artisan sab-hero-estimator:install --fresh --force
 php artisan tinker --execute="DB::table('estimator_rates')->count()"
 
 # If not found, reinstall
-php artisan sab-hero-estimator:install --fresh
+php artisan sabhero-estimator:install --fresh
 ```
 
 ## Advanced Topics

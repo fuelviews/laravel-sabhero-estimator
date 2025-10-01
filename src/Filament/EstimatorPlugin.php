@@ -18,7 +18,7 @@ class EstimatorPlugin implements Plugin
 
     public function getId(): string
     {
-        return 'sab-hero-estimator';
+        return 'sabhero-estimator';
     }
 
     public function register(Panel $panel): void
