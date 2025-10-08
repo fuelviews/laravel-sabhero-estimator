@@ -32,9 +32,14 @@ class ProjectResource extends Resource
                     'interior' => 'Interior',
                     'exterior' => 'Exterior',
                 ])
-                ->required(),
+                ->required()
+                ->columnSpan(2),
 
-            Forms\Components\TextInput::make('name')
+            Forms\Components\TextInput::make('first_name')
+                ->required()
+                ->maxLength(255),
+
+            Forms\Components\TextInput::make('last_name')
                 ->required()
                 ->maxLength(255),
 
@@ -48,9 +53,8 @@ class ProjectResource extends Resource
                 ->required()
                 ->maxLength(50),
 
-            Forms\Components\Textarea::make('address')
+            Forms\Components\TextInput::make('zipCode')
                 ->required()
-                ->rows(2)
                 ->maxLength(255),
 
             Forms\Components\TextInput::make('estimated_low')
@@ -86,7 +90,11 @@ class ProjectResource extends Resource
                     })
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('first_name')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('last_name')
                     ->searchable()
                     ->sortable(),
 
@@ -140,14 +148,18 @@ class ProjectResource extends Resource
             ->schema([
                 Infolists\Components\Section::make('Contact Information')
                     ->schema([
-                        Infolists\Components\TextEntry::make('name'),
+                        Infolists\Components\TextEntry::make('first_name')
+                            ->label('First Name'),
+                        Infolists\Components\TextEntry::make('last_name')
+                            ->label('Last Name'),
                         Infolists\Components\TextEntry::make('email')
                             ->copyable()
                             ->copyMessage('Email copied!'),
                         Infolists\Components\TextEntry::make('phone')
                             ->copyable()
                             ->copyMessage('Phone copied!'),
-                        Infolists\Components\TextEntry::make('address'),
+                        Infolists\Components\TextEntry::make('zipCode')
+                            ->label('Zip Code'),
                     ])->columns(2),
 
                 Infolists\Components\Section::make('Project Details')
