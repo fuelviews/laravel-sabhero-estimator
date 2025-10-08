@@ -24,7 +24,7 @@ class ProjectEstimator extends Component
 
     public string $first_name = '';
 
-    public string $last_name  = '';
+    public string $last_name = '';
 
     public $email;
 
@@ -194,12 +194,12 @@ class ProjectEstimator extends Component
 
     // Return true only if there is at least one real paint_condition option
     protected function hasPaintConditionOptions(): bool
-{
-    return !empty($this->paintConditionOptions)
-        && collect($this->paintConditionOptions)
-            ->filter(fn ($o) => !empty($o['key']))
-            ->count() > 0;
-}
+    {
+        return ! empty($this->paintConditionOptions)
+            && collect($this->paintConditionOptions)
+                ->filter(fn ($o) => ! empty($o['key']))
+                ->count() > 0;
+    }
 
     protected function initializeDefaults()
     {
@@ -388,22 +388,22 @@ class ProjectEstimator extends Component
                 }
 
                 $rules = [
-                    'house_style'        => 'required|string',
-                    'number_of_floors'   => 'required|integer|min:1',
-                    'total_floor_space'  => 'required|numeric|min:0',
-                    'paint_condition'    => $hasPaintCondition ? 'required|string' : 'nullable|string',
-                    'coverage'           => 'required|string',
+                    'house_style' => 'required|string',
+                    'number_of_floors' => 'required|integer|min:1',
+                    'total_floor_space' => 'required|numeric|min:0',
+                    'paint_condition' => $hasPaintCondition ? 'required|string' : 'nullable|string',
+                    'coverage' => 'required|string',
                 ];
 
                 $messages = [
-                    'house_style.required'        => 'Please choose a house style.',
-                    'number_of_floors.required'   => 'Please select the number of floors.',
-                    'number_of_floors.integer'    => 'Number of floors must be a whole number.',
-                    'number_of_floors.min'        => 'Number of floors must be at least 1.',
-                    'total_floor_space.required'  => 'Please enter the total floor space.',
-                    'total_floor_space.numeric'   => 'Floor space must be a number.',
-                    'total_floor_space.min'       => 'Floor space must be at least zero.',
-                    'coverage.required'           => 'Please select how much of the house is being painted.',
+                    'house_style.required' => 'Please choose a house style.',
+                    'number_of_floors.required' => 'Please select the number of floors.',
+                    'number_of_floors.integer' => 'Number of floors must be a whole number.',
+                    'number_of_floors.min' => 'Number of floors must be at least 1.',
+                    'total_floor_space.required' => 'Please enter the total floor space.',
+                    'total_floor_space.numeric' => 'Floor space must be a number.',
+                    'total_floor_space.min' => 'Floor space must be at least zero.',
+                    'coverage.required' => 'Please select how much of the house is being painted.',
                 ];
 
                 // Only add this message when the field is actually required
