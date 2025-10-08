@@ -22,13 +22,15 @@ class ProjectEstimator extends Component
     // Step 1 – Project Type & Contact Info
     public $project_type;
 
-    public $name;
+    public string $first_name = '';
+
+    public string $last_name  = '';
 
     public $email;
 
     public $phone;
 
-    public $address;
+    public $zipCode;
 
     // Step 2 – Details for measurements
     public $areas = [];
@@ -327,10 +329,11 @@ class ProjectEstimator extends Component
         if ($step == 2) {
             $this->validate([
                 'project_type' => 'required|in:interior,exterior',
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255',
+                'first_name' => 'required|string|max:25',
+                'last_name' => 'required|string|max:25',
+                'email' => 'required|email|max:65',
                 'phone' => 'required|string|max:50',
-                'address' => 'required|string|max:255',
+                'zipCode' => 'required|string|max:12',
             ]);
         }
 
@@ -449,10 +452,11 @@ class ProjectEstimator extends Component
         // Save the project data
         $project = Project::create([
             'project_type' => $this->project_type,
-            'name' => $this->name,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'address' => $this->address,
+            'zipCode' => $this->zipCode,
             'estimated_low' => $this->estimated_low,
             'estimated_high' => $this->estimated_high,
         ]);
@@ -488,10 +492,11 @@ class ProjectEstimator extends Component
 
         // Submit to external API
         $projectData = array_merge($this->getCalculationData(), [
-            'name' => $this->name,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'address' => $this->address,
+            'zipCode' => $this->zipCode,
             'estimated_low' => $this->estimated_low,
             'estimated_high' => $this->estimated_high,
         ]);

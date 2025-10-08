@@ -48,16 +48,35 @@
 
         <!-- Name -->
         <div class="mt-4">
-            <label for="name" class="block font-medium">Name</label>
-            <input
-                id="name"
-                type="text"
-                wire:model.live="name"
-                class="mt-1 block w-full rounded-standard border p-2 @error('name') border-red-500 @else border-gray-300 @enderror"
-            />
-            @error('name')
-                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-            @enderror
+            <label class="block font-medium">Name</label>
+            <div class="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <input
+                        id="first_name"
+                        type="text"
+                        autocomplete="given-name"
+                        placeholder="First name"
+                        wire:model.live="first_name"
+                        class="block w-full rounded-standard border p-2 @error('first_name') border-red-500 @else border-gray-300 @enderror"
+                    />
+                    @error('first_name')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <input
+                        id="last_name"
+                        type="text"
+                        autocomplete="family-name"
+                        placeholder="Last name"
+                        wire:model.live="last_name"
+                        class="block w-full rounded-standard border p-2 @error('last_name') border-red-500 @else border-gray-300 @enderror"
+                    />
+                    @error('last_name')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
         </div>
 
         <!-- Email -->
@@ -88,16 +107,16 @@
             @enderror
         </div>
 
-        <!-- Address -->
+        <!-- Zip Code -->
         <div class="mt-4">
-            <label for="address" class="block font-medium">Address</label>
+            <label for="zipCode" class="block font-medium">Zip Code</label>
             <input
-                id="address"
+                id="zipCode"
                 type="text"
-                wire:model.live="address"
-                class="mt-1 block w-full rounded-standard border p-2 @error('address') border-red-500 @else border-gray-300 @enderror"
+                wire:model.live="zipCode"
+                class="mt-1 block w-full rounded-standard border p-2 @error('zipCode') border-red-500 @else border-gray-300 @enderror"
             />
-            @error('address')
+            @error('zipCode')
                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
