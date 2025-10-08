@@ -203,7 +203,7 @@
                         id="full_floor_space"
                         type="number"
                         step="0.01"
-                        wire:model.live="full_floor_space"
+                        wire:model.live.debounce.500ms="full_floor_space"
                         wire:change="calculateEstimate"
                         class="mt-1 block w-full rounded-standard border p-2 @error('full_floor_space') border-red-500 @else border-gray-300 @enderror"
                         placeholder="e.g. 2400"
@@ -317,18 +317,31 @@
             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
         @enderror
 
-            <label for="paint_condition" class="mt-2 block font-medium">
-                {{ $paintConditionLabel }}
-            </label>
-            <select id="paint_condition" wire:model.live="paint_condition" class="mt-1 block w-full border border-gray-300 rounded-standard p-2">
-                <option value="">{{ $paintConditionDefaultOption }}</option>
-                @foreach ($paintConditionOptions as $option)
-                    <option value="{{ $option['key'] }}">{{ ucfirst($option['key']) }}</option>
-                @endforeach
-            </select>
-            @error('paint_condition')
-            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-            @enderror
+            @php
+    // Only show paint_condition if there are real options
+    $hasPaintConditionOptions = !empty($paintConditionOptions) && collect($paintConditionOptions)
+        ->filter(fn($o) => !empty($o['key']))
+        ->count() > 0;
+@endphp
+
+@if ($hasPaintConditionOptions)
+    <label for="paint_condition" class="mt-2 block font-medium">
+        {{ $paintConditionLabel }}
+    </label>
+    <select id="paint_condition"
+            wire:model.live="paint_condition"
+            class="mt-1 block w-full border border-gray-300 rounded-standard p-2">
+        <option value="">{{ $paintConditionDefaultOption }}</option>
+        @foreach ($paintConditionOptions as $option)
+            @if (!empty($option['key']))
+                <option value="{{ $option['key'] }}">{{ ucfirst($option['key']) }}</option>
+            @endif
+        @endforeach
+    </select>
+    @error('paint_condition')
+        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+    @enderror
+@endif
 
             <div class="flex justify-between mt-4">
                 <button wire:click="previousStep" class="bg-gray-500 text-white px-4 py-2 rounded-standard">Back</button>
