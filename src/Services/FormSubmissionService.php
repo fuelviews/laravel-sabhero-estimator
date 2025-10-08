@@ -94,10 +94,11 @@ class FormSubmissionService
         // Build payload without complex arrays
         $payload = [
             'project_type' => $projectData['project_type'],
-            'name' => $projectData['name'],
+            'first_name' => $projectData['first_name'],
+            'last_name' => $projectData['last_name'],
             'email' => $projectData['email'],
             'phone' => $projectData['phone'],
-            'address' => $projectData['address'],
+            'zipCode' => $projectData['zipCode'],
             'estimated_low' => $projectData['estimated_low'],
             'estimated_high' => $projectData['estimated_high'],
             'areas' => $flatAreasString,
