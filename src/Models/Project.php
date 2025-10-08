@@ -17,10 +17,11 @@ class Project extends Model
 
     protected $fillable = [
         'project_type',
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'phone',
-        'address',
+        'zipCode',
         'estimated_low',
         'estimated_high',
         'exterior_details',
