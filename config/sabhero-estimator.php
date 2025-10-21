@@ -24,8 +24,8 @@ return [
     |
     */
     'form_endpoints' => [
-        'production_url' => config('forms.forms.free_estimate.production_url'),
-        'development_url' => config('forms.forms.free_estimate.development_url'),
+        'production_url' => config('forms.forms.free_estimate.production_url', ''),
+        'development_url' => config('forms.forms.free_estimate.development_url', ''),
     ],
 
     /*
