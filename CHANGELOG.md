@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-sabhero-estimator` will be documented in this file.
 
+## v0.0.10 - 2025-10-21
+
+### What's Changed
+
+* Add default empty values to form endpoint configs and update image source path in migration to use absolute vendor package path for reliable file access. by @thejmitchener in https://github.com/fuelviews/laravel-sabhero-estimator/pull/17
+
+**Full Changelog**: https://github.com/fuelviews/laravel-sabhero-estimator/compare/v0.0.9...v0.0.10
+
 ## v0.0.9 - 2025-10-08
 
 ### What's Changed
