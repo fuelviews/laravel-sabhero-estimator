@@ -207,6 +207,7 @@ class ProjectResource extends Resource
                                 if (is_array($details) && isset($details['full_items']) && is_array($details['full_items'])) {
                                     $details['full_items'] = implode(', ', $details['full_items']);
                                 }
+
                                 return $details;
                             }),
                     ])

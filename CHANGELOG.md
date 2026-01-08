@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-sabhero-estimator` will be documented in this file.
 
+## v0.0.14 - 2026-01-08
+
+### What's Changed
+
+* Theta updates by @sweatybreeze in https://github.com/fuelviews/laravel-sabhero-estimator/pull/23
+
+**Full Changelog**: https://github.com/fuelviews/laravel-sabhero-estimator/compare/v0.0.13...v0.0.14
+
 ## v0.0.13 - 2026-01-08
 
 ### What's Changed
