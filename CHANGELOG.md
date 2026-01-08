@@ -2,6 +2,18 @@
 
 All notable changes to `laravel-sabhero-estimator` will be documented in this file.
 
+## v0.0.13 - 2026-01-08
+
+### What's Changed
+
+* Add interior_details column to projects table to store interior-specific submission data
+* Ensure all estimator submission fields are collected, saved, and sent via form submission
+* Improve calculation service to handle missing/null optional fields gracefully
+* Add ability to remove surfaces in partial interior estimates
+* Fix ProjectResource infolist to properly display interior details
+
+**Full Changelog**: https://github.com/fuelviews/laravel-sabhero-estimator/compare/v0.0.10...v0.0.13
+
 ## v0.0.10 - 2025-10-21
 
 ### What's Changed

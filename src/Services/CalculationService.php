@@ -13,10 +13,16 @@ class CalculationService implements EstimatorCalculator
     {
         $deviation = Setting::getDeviationPercentage();
 
-        if ($data['project_type'] === 'interior') {
+        if (($data['project_type'] ?? null) === 'interior') {
             $baseCost = $this->calculateInterior($data);
         } else {
             $baseCost = $this->calculateExterior($data);
+        }
+
+        // Ensure we always return a valid estimate (minimum $0.01 if calculation resulted in 0)
+        // This prevents showing $0.00 - $0.00 to users
+        if ($baseCost <= 0) {
+            $baseCost = 0;
         }
 
         return $this->applyDeviation($baseCost, $deviation);
@@ -26,73 +32,114 @@ class CalculationService implements EstimatorCalculator
     {
         $totalCost = 0;
 
-        if ($data['interior_scope'] === 'full') {
+        if (($data['interior_scope'] ?? null) === 'full') {
             // Full interior calculation
-            $squareFeet = $data['full_floor_space'] ?? $data['total_floor_space'] ?? 0;
+            $squareFeet = (float) ($data['full_floor_space'] ?? $data['total_floor_space'] ?? 0);
 
-            // Get base rate for full interior
-            $rateModel = Rate::where('project_type', 'interior')
-                ->where('surface_type', 'interior_full_base')
-                ->first();
+            // Only calculate if we have square footage
+            if ($squareFeet > 0) {
+                // Get base rate for full interior
+                $rateModel = Rate::where('project_type', 'interior')
+                    ->where('surface_type', 'interior_full_base')
+                    ->first();
 
-            $baseRate = $rateModel?->rate ?? 0;
-            $baseCost = $squareFeet * $baseRate;
+                $baseRate = (float) ($rateModel?->rate ?? 0);
+                $baseCost = $squareFeet * $baseRate;
 
-            // Apply interior extras
-            if (! empty($data['full_items']) && is_array($data['full_items'])) {
-                $extraMults = Multiplier::interiorExtra()
-                    ->pluck('value', 'key')
-                    ->toArray();
+                // Apply interior extras
+                if (! empty($data['full_items']) && is_array($data['full_items'])) {
+                    $extraMults = Multiplier::interiorExtra()
+                        ->pluck('value', 'key')
+                        ->toArray();
 
-                $sumDeviation = 0;
-                foreach ($data['full_items'] as $itemKey) {
-                    $multiplier = $extraMults[$itemKey] ?? 1;
-                    $sumDeviation += ($multiplier - 1);
+                    $sumDeviation = 0;
+                    foreach ($data['full_items'] as $itemKey) {
+                        $multiplier = (float) ($extraMults[$itemKey] ?? 1);
+                        $sumDeviation += ($multiplier - 1);
+                    }
+
+                    $finalMultiplier = 1 + $sumDeviation;
+                    $totalCost = $baseCost * $finalMultiplier;
+                } else {
+                    $totalCost = $baseCost;
                 }
-
-                $finalMultiplier = 1 + $sumDeviation;
-                $totalCost = $baseCost * $finalMultiplier;
-            } else {
-                $totalCost = $baseCost;
             }
         } else {
             // Partial interior calculation
-            foreach ($data['areas'] as $area) {
-                foreach ($area['surfaces'] as $surface) {
-                    $rateModel = Rate::where('surface_type', $surface['surface_type'])->first();
-                    if ($rateModel) {
-                        if ($rateModel->input_type === 'quantity') {
-                            $cost = $surface['quantity'] * $rateModel->rate;
-                        } else {
-                            $cost = $surface['measurement'] * $rateModel->rate;
+            $areas = $data['areas'] ?? [];
+            if (is_array($areas) && ! empty($areas)) {
+                foreach ($areas as $area) {
+                    $surfaces = $area['surfaces'] ?? [];
+                    if (is_array($surfaces) && ! empty($surfaces)) {
+                        foreach ($surfaces as $surface) {
+                            if (empty($surface['surface_type'])) {
+                                continue;
+                            }
+
+                            $rateModel = Rate::where('surface_type', $surface['surface_type'])->first();
+                            if ($rateModel) {
+                                $rate = (float) ($rateModel->rate ?? 0);
+                                if ($rateModel->input_type === 'quantity') {
+                                    $quantity = (int) ($surface['quantity'] ?? 1);
+                                    $cost = $quantity * $rate;
+                                } else {
+                                    $measurement = (float) ($surface['measurement'] ?? 0);
+                                    $cost = $measurement * $rate;
+                                }
+                                $totalCost += $cost;
+                            }
                         }
-                        $totalCost += $cost;
                     }
                 }
             }
         }
 
-        return $totalCost;
+        return max(0, $totalCost);
     }
 
     public function calculateExterior(array $data): float
     {
+        $totalFloorSpace = (float) ($data['total_floor_space'] ?? 0);
+
+        // Only calculate if we have floor space
+        if ($totalFloorSpace <= 0) {
+            return 0;
+        }
+
         // Get base rate for exterior projects
         $rateModel = Rate::where('surface_type', 'exterior')->first();
-        $baseCost = $rateModel ? ($data['total_floor_space'] * $rateModel->rate) : 0;
+        $baseRate = (float) ($rateModel?->rate ?? 0);
 
-        // Get multipliers
-        $houseStyleMultiplier = (float) Multiplier::where('category', 'house_style')
-            ->where('key', $data['house_style'])
-            ->value('value') ?? 1;
+        if ($baseRate <= 0) {
+            return 0;
+        }
 
-        $floorMultiplier = (float) Multiplier::where('category', 'floor')
-            ->where('key', (string) $data['number_of_floors'])
-            ->value('value') ?? 1;
+        $baseCost = $totalFloorSpace * $baseRate;
 
-        $conditionMultiplier = (float) Multiplier::where('category', 'condition')
-            ->where('key', $data['paint_condition'])
-            ->value('value') ?? 1;
+        // Get multipliers with safe defaults
+        $houseStyle = $data['house_style'] ?? null;
+        $houseStyleMultiplier = 1;
+        if (! empty($houseStyle)) {
+            $houseStyleMultiplier = (float) (Multiplier::where('category', 'house_style')
+                ->where('key', $houseStyle)
+                ->value('value') ?? 1);
+        }
+
+        $numberOfFloors = $data['number_of_floors'] ?? null;
+        $floorMultiplier = 1;
+        if (! empty($numberOfFloors)) {
+            $floorMultiplier = (float) (Multiplier::where('category', 'floor')
+                ->where('key', (string) $numberOfFloors)
+                ->value('value') ?? 1);
+        }
+
+        $paintCondition = $data['paint_condition'] ?? null;
+        $conditionMultiplier = 1;
+        if (! empty($paintCondition)) {
+            $conditionMultiplier = (float) (Multiplier::where('category', 'condition')
+                ->where('key', $paintCondition)
+                ->value('value') ?? 1);
+        }
 
         // Calculate additive multiplier
         $finalMultiplier = 1 + (
@@ -102,11 +149,15 @@ class CalculationService implements EstimatorCalculator
         );
 
         // Apply coverage multiplier
-        $coverageMultiplier = (float) Multiplier::where('category', 'coverage')
-            ->where('key', $data['coverage'])
-            ->value('value') ?? 1;
+        $coverage = $data['coverage'] ?? null;
+        $coverageMultiplier = 1;
+        if (! empty($coverage)) {
+            $coverageMultiplier = (float) (Multiplier::where('category', 'coverage')
+                ->where('key', $coverage)
+                ->value('value') ?? 1);
+        }
 
-        return $baseCost * $finalMultiplier * $coverageMultiplier;
+        return max(0, $baseCost * $finalMultiplier * $coverageMultiplier);
     }
 
     public function applyDeviation(float $baseCost, float $deviation): array

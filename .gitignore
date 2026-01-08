@@ -49,3 +49,6 @@ error_log
 /.php-cs-fixer.cache
 !/.editorconfig
 .editorconfig
+
+# Snyk Security Extension - AI Rules (auto-generated)
+.cursor/rules/snyk_rules.mdc
