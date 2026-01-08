@@ -74,6 +74,12 @@ class ProjectResource extends Resource
                 ->keyLabel('Property')
                 ->valueLabel('Value')
                 ->visible(fn (Forms\Get $get): bool => $get('project_type') === 'exterior'),
+
+            Forms\Components\KeyValue::make('interior_details')
+                ->label('Interior Details')
+                ->keyLabel('Property')
+                ->valueLabel('Value')
+                ->visible(fn (Forms\Get $get): bool => $get('project_type') === 'interior'),
         ]);
     }
 
@@ -189,6 +195,22 @@ class ProjectResource extends Resource
                             ->valueLabel('Value'),
                     ])
                     ->visible(fn (Project $record): bool => $record->project_type === 'exterior'),
+
+                Infolists\Components\Section::make('Interior Details')
+                    ->schema([
+                        Infolists\Components\KeyValueEntry::make('interior_details')
+                            ->label('')
+                            ->keyLabel('Property')
+                            ->valueLabel('Value')
+                            ->getStateUsing(function (Project $record) {
+                                $details = $record->interior_details ?? [];
+                                if (is_array($details) && isset($details['full_items']) && is_array($details['full_items'])) {
+                                    $details['full_items'] = implode(', ', $details['full_items']);
+                                }
+                                return $details;
+                            }),
+                    ])
+                    ->visible(fn (Project $record): bool => $record->project_type === 'interior' && ! empty($record->interior_details)),
 
                 Infolists\Components\Section::make('Areas & Surfaces')
                     ->schema([

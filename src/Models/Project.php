@@ -25,6 +25,7 @@ class Project extends Model
         'estimated_low',
         'estimated_high',
         'exterior_details',
+        'interior_details',
     ];
 
     protected function casts(): array
@@ -33,6 +34,7 @@ class Project extends Model
             'estimated_low' => 'decimal:2',
             'estimated_high' => 'decimal:2',
             'exterior_details' => 'json',
+            'interior_details' => 'json',
         ];
     }
 

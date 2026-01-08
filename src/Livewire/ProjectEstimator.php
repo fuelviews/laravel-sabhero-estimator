@@ -232,8 +232,9 @@ class ProjectEstimator extends Component
 
     public function removeSurface($areaIndex, $surfaceIndex)
     {
-        // Check that the area exists and that there is more than one surface in that area
-        if (isset($this->areas[$areaIndex]['surfaces']) && count($this->areas[$areaIndex]['surfaces']) > 1) {
+        // Check that the area exists and has surfaces
+        // Only allow removal if there's more than one surface (keep at least one)
+        if (isset($this->areas[$areaIndex]['surfaces']) && isset($this->areas[$areaIndex]['surfaces'][$surfaceIndex]) && count($this->areas[$areaIndex]['surfaces']) > 1) {
             unset($this->areas[$areaIndex]['surfaces'][$surfaceIndex]);
             // Reindex the surfaces array for the area
             $this->areas[$areaIndex]['surfaces'] = array_values($this->areas[$areaIndex]['surfaces']);
@@ -418,11 +419,71 @@ class ProjectEstimator extends Component
 
     public function calculateEstimate()
     {
+        // Only calculate if we have minimum required data
+        if (! $this->hasMinimumDataForCalculation()) {
+            $this->estimated_low = 0;
+            $this->estimated_high = 0;
+
+            return;
+        }
+
         $data = $this->getCalculationData();
         $result = $this->calculationService->calculate($data);
 
-        $this->estimated_low = $result['low'];
-        $this->estimated_high = $result['high'];
+        $this->estimated_low = max(0, $result['low'] ?? 0);
+        $this->estimated_high = max(0, $result['high'] ?? 0);
+    }
+
+    /**
+     * Check if we have minimum required data to perform a calculation
+     */
+    protected function hasMinimumDataForCalculation(): bool
+    {
+        if (empty($this->project_type)) {
+            return false;
+        }
+
+        if ($this->project_type === 'interior') {
+            if (empty($this->interior_scope)) {
+                return false;
+            }
+
+            if ($this->interior_scope === 'full') {
+                // Need floor space for full interior
+                return ! empty($this->full_floor_space) && $this->full_floor_space > 0;
+            } else {
+                // Need at least one area with surfaces for partial
+                if (empty($this->areas) || ! is_array($this->areas)) {
+                    return false;
+                }
+
+                foreach ($this->areas as $area) {
+                    $surfaces = $area['surfaces'] ?? [];
+                    if (! empty($surfaces) && is_array($surfaces)) {
+                        foreach ($surfaces as $surface) {
+                            if (! empty($surface['surface_type'])) {
+                                // Check if we have the required input (measurement or quantity)
+                                $inputType = Rate::where('surface_type', $surface['surface_type'])->value('input_type');
+                                if ($inputType === 'quantity') {
+                                    if (! empty($surface['quantity']) && $surface['quantity'] > 0) {
+                                        return true;
+                                    }
+                                } else {
+                                    if (! empty($surface['measurement']) && $surface['measurement'] > 0) {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return false;
+            }
+        } else {
+            // Exterior: need floor space at minimum
+            return ! empty($this->total_floor_space) && $this->total_floor_space > 0;
+        }
     }
 
     protected function getCalculationData(): array
@@ -462,18 +523,35 @@ class ProjectEstimator extends Component
         ]);
 
         if ($this->project_type === 'interior') {
-            foreach ($this->areas as $areaData) {
-                $area = Area::create([
-                    'project_id' => $project->id,
-                    'name' => $areaData['name'] ?? null,
-                ]);
-                foreach ($areaData['surfaces'] as $surfaceData) {
-                    Surface::create([
-                        'area_id' => $area->id,
-                        'surface_type' => $surfaceData['surface_type'],
-                        'measurement' => $surfaceData['measurement'],
-                        'quantity' => $surfaceData['quantity'],
+            // Save interior details
+            $interiorDetails = [
+                'interior_scope' => $this->interior_scope,
+            ];
+
+            if ($this->interior_scope === 'full') {
+                $interiorDetails['full_floor_space'] = $this->full_floor_space;
+                $interiorDetails['full_items'] = $this->full_items;
+            }
+
+            $project->update([
+                'interior_details' => $interiorDetails,
+            ]);
+
+            // Only save areas/surfaces for partial interior projects
+            if ($this->interior_scope === 'partial') {
+                foreach ($this->areas as $areaData) {
+                    $area = Area::create([
+                        'project_id' => $project->id,
+                        'name' => $areaData['name'] ?? null,
                     ]);
+                    foreach ($areaData['surfaces'] as $surfaceData) {
+                        Surface::create([
+                            'area_id' => $area->id,
+                            'surface_type' => $surfaceData['surface_type'],
+                            'measurement' => $surfaceData['measurement'],
+                            'quantity' => $surfaceData['quantity'],
+                        ]);
+                    }
                 }
             }
         } else {

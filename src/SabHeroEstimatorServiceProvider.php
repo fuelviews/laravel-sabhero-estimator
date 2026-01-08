@@ -23,6 +23,7 @@ class SabHeroEstimatorServiceProvider extends PackageServiceProvider
                 'create_estimator_surfaces_table',
                 'create_estimator_settings_table',
                 'create_estimator_multipliers_table',
+                'add_interior_details_to_estimator_projects_table',
                 'populate_estimator_rates_defaults',
                 'populate_estimator_multipliers_defaults',
                 'populate_estimator_settings_defaults',
