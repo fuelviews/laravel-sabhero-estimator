@@ -167,7 +167,20 @@
                         <input type="text" wire:model.live="areas.{{ $index }}.name" class="mt-1 rounded-standard block w-full" />
 
                         @foreach ($area['surfaces'] as $sindex => $surface)
-                        <div class="mt-2 p-2 rounded-standard border">
+                        <div class="mt-2 p-2 rounded-standard border relative">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-medium text-sm text-gray-700">Surface {{ $sindex + 1 }}</h4>
+                                @if (count($area['surfaces']) > 1)
+                                    <button 
+                                        type="button"
+                                        wire:click.prevent="removeSurface({{ $index }}, {{ $sindex }})"
+                                        class="text-red-600 hover:text-red-800 text-sm font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                                        title="Remove this surface"
+                                    >
+                                        × Remove
+                                    </button>
+                                @endif
+                            </div>
                             <label>Surface Type</label>
                             <select wire:model.live="areas.{{ $index }}.surfaces.{{ $sindex }}.surface_type" class="mt-1 block w-full rounded-standard">
                                 <option value="">Select Surface Type</option>
