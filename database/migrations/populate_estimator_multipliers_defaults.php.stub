@@ -19,10 +19,10 @@ return new class extends Migration
         $disk = config('sabhero-estimator.media.disk', 'public');
         $targetPath = 'sabhero-estimator/images';
 
-        // Source images from package
-        $sourceDir = __DIR__ . '/../../resources/images';
+        // Source images from package - use absolute path to vendor package
+        $sourceDir = base_path('vendor/fuelviews/laravel-sabhero-estimator/resources/images');
 
-        if (!File::exists($sourceDir)) {
+        if (! File::exists($sourceDir)) {
             return;
         }
 
@@ -33,7 +33,7 @@ return new class extends Migration
 
             // Copy to configured disk
             Storage::disk($disk)->put(
-                $targetPath . '/' . $filename,
+                $targetPath.'/'.$filename,
                 $contents
             );
         }

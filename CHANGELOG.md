@@ -2,7 +2,7 @@
 
 All notable changes to `laravel-sabhero-estimator` will be documented in this file.
 
-## v0.0.12 - 2026-01-08
+## v0.0.13 - 2026-01-08
 
 ### What's Changed
 
@@ -12,7 +12,23 @@ All notable changes to `laravel-sabhero-estimator` will be documented in this fi
 * Add ability to remove surfaces in partial interior estimates
 * Fix ProjectResource infolist to properly display interior details
 
-**Full Changelog**: https://github.com/fuelviews/laravel-sabhero-estimator/compare/v0.0.9...v0.0.12
+**Full Changelog**: https://github.com/fuelviews/laravel-sabhero-estimator/compare/v0.0.10...v0.0.13
+
+## v0.0.10 - 2025-10-21
+
+### What's Changed
+
+* Add default empty values to form endpoint configs and update image source path in migration to use absolute vendor package path for reliable file access. by @thejmitchener in https://github.com/fuelviews/laravel-sabhero-estimator/pull/17
+
+**Full Changelog**: https://github.com/fuelviews/laravel-sabhero-estimator/compare/v0.0.9...v0.0.10
+
+## v0.0.9 - 2025-10-08
+
+### What's Changed
+
+* shippable by @sweatybreeze in https://github.com/fuelviews/laravel-sabhero-estimator/pull/16
+
+**Full Changelog**: https://github.com/fuelviews/laravel-sabhero-estimator/compare/v0.0.8...v0.0.9
 
 ## v0.0.8 - 2025-10-08
 
