@@ -104,9 +104,36 @@ class FormSubmissionService
             'areas' => $flatAreasString,
         ];
 
+        // Add interior details if present
+        if ($projectData['project_type'] === 'interior') {
+            if (! empty($projectData['interior_scope'])) {
+                $payload['interior_scope'] = $projectData['interior_scope'];
+            }
+            if (! empty($projectData['full_floor_space'])) {
+                $payload['full_floor_space'] = $projectData['full_floor_space'];
+            }
+            if (! empty($projectData['full_items']) && is_array($projectData['full_items'])) {
+                $payload['full_items'] = implode(',', $projectData['full_items']);
+            }
+        }
+
         // Add exterior details if present
-        if (! empty($projectData['exterior_details'])) {
-            $payload = array_merge($payload, $projectData['exterior_details']);
+        if ($projectData['project_type'] === 'exterior') {
+            if (! empty($projectData['house_style'])) {
+                $payload['house_style'] = $projectData['house_style'];
+            }
+            if (! empty($projectData['number_of_floors'])) {
+                $payload['number_of_floors'] = $projectData['number_of_floors'];
+            }
+            if (! empty($projectData['total_floor_space'])) {
+                $payload['total_floor_space'] = $projectData['total_floor_space'];
+            }
+            if (! empty($projectData['paint_condition'])) {
+                $payload['paint_condition'] = $projectData['paint_condition'];
+            }
+            if (! empty($projectData['coverage'])) {
+                $payload['coverage'] = $projectData['coverage'];
+            }
         }
 
         return json_encode($payload);
