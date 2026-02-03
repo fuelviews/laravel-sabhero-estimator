@@ -1,5 +1,6 @@
 {
     "name": "fuelviews/laravel-sabhero-estimator",
+    "version": "0.0.15",
     "description": "A comprehensive painting project estimator package for Laravel applications with Livewire and FilamentPHP",
     "keywords": [
         "fuelviews",
