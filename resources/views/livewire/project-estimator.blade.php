@@ -1,15 +1,27 @@
 @php use Fuelviews\SabHeroEstimator\Models\Rate; @endphp
+@php
+    $totalSteps = $contactInfoFirst ? 4 : 5;
+@endphp
 <div class="max-w-xl mx-auto mb-12 p-4 lg:p-0">
-    <!-- Progress Bar (optional) -->
+    <!-- Progress Bar -->
     <div class="mb-4">
         <div class="flex justify-between">
             <span class="{{ $step >= 1 ? 'font-bold' : '' }}">Welcome</span>
-            <span class="{{ $step >= 2 ? 'font-bold' : '' }}">Contact Info</span>
+            @if ($contactInfoFirst)
+                <span class="{{ $step >= 2 ? 'font-bold' : '' }}">Contact Info</span>
+            @else
+                <span class="{{ $step >= 2 ? 'font-bold' : '' }}">Project Type</span>
+            @endif
             <span class="{{ $step >= 3 ? 'font-bold' : '' }}">Measurements</span>
-            <span class="{{ $step >= 4 ? 'font-bold' : '' }}">Review</span>
+            @if (! $contactInfoFirst)
+                <span class="{{ $step >= 4 ? 'font-bold' : '' }}">Contact</span>
+                <span class="{{ $step >= 5 ? 'font-bold' : '' }}">Review</span>
+            @else
+                <span class="{{ $step >= 4 ? 'font-bold' : '' }}">Review</span>
+            @endif
         </div>
         <div class="w-full bg-gray-200 h-2 rounded">
-            <div class="bg-blue-500 h-2 rounded" style="width: {{ ($step / 4) * 100 }}%"></div>
+            <div class="bg-blue-500 h-2 rounded" style="width: {{ ($step / $totalSteps) * 100 }}%"></div>
         </div>
     </div>
 
@@ -18,7 +30,11 @@
         <div class="p-8 text-center">
             <h1 class="text-3xl font-bold mb-4">Welcome to Our Painting Estimator</h1>
             <p class="mb-8">
-                Please follow the steps to enter your project details. You will first provide your contact information, then your project measurements, and finally review your estimate.
+                @if ($contactInfoFirst)
+                    Please follow the steps to enter your project details. You will first provide your contact information, then your project measurements, and finally review your estimate.
+                @else
+                    Please follow the steps to enter your project details. You will choose your project type, enter measurements, provide your contact information, and then see your estimate.
+                @endif
             </p>
             <button wire:click="nextStep" class="bg-blue-500 text-white px-6 py-2 rounded-standard">
                 Continue
@@ -46,6 +62,7 @@
             @enderror
         </div>
 
+        @if ($contactInfoFirst)
         <!-- Name -->
         <div class="mt-4">
             <label class="block font-medium">Name</label>
@@ -120,6 +137,7 @@
                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
+        @endif
 
         <!-- Navigation Buttons -->
         <div class="flex justify-between mt-6">
@@ -171,7 +189,7 @@
                             <div class="flex justify-between items-start mb-2">
                                 <h4 class="font-medium text-sm text-gray-700">Surface {{ $sindex + 1 }}</h4>
                                 @if (count($area['surfaces']) > 1)
-                                    <button 
+                                    <button
                                         type="button"
                                         wire:click.prevent="removeSurface({{ $index }}, {{ $sindex }})"
                                         class="text-red-600 hover:text-red-800 text-sm font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors"
@@ -377,13 +395,11 @@
 
             <div class="flex justify-between mt-4">
                 <button wire:click="previousStep" class="bg-gray-500 text-white px-4 py-2 rounded-standard">Back</button>
+                @if ($contactInfoFirst)
                 <div x-data="{ showConfirm: false }">
-                    <!-- Calculate Estimate Button -->
                     <button @click="showConfirm = true" class="bg-blue-500 text-white px-4 py-2 rounded-standard">
                         Calculate Estimate
                     </button>
-
-                    <!-- Confirmation Modal -->
                     <div x-show="showConfirm" x-transition class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                         <div class="bg-white p-6 rounded-standard shadow-lg max-w-md w-full">
                             <h3 class="text-xl font-bold mb-4">Confirm Submission</h3>
@@ -394,7 +410,6 @@
                                 <button @click="showConfirm = false" class="mr-2 px-4 py-2 border rounded-standard">
                                     Cancel
                                 </button>
-                                <!-- When confirmed, call the Livewire method to submit and then hide the modal -->
                                 <button @click="$wire.submitProject(); showConfirm = false" class="bg-blue-500 text-white px-4 py-2 rounded-standard">
                                     Yes, Submit
                                 </button>
@@ -402,6 +417,11 @@
                         </div>
                     </div>
                 </div>
+                @else
+                <button wire:click="nextStep" class="bg-blue-500 text-white px-4 py-2 rounded-standard">
+                    Next
+                </button>
+                @endif
             </div>
         </div>
 
@@ -410,14 +430,12 @@
         <div class="flex justify-between mt-4">
             <button wire:click="previousStep" class="bg-gray-500 text-white px-4 py-2 rounded-standard">Back</button>
 
-            @if ($project_type === 'interior')
-                <!-- Interior projects show confirmation modal just like exterior -->
+            @if ($contactInfoFirst)
+                @if ($project_type === 'interior')
                 <div x-data="{ showConfirm: false }">
                     <button @click="showConfirm = true" class="bg-blue-500 text-white px-4 py-2 rounded-standard">
                         Calculate Estimate
                     </button>
-
-                    <!-- Confirmation Modal -->
                     <div x-show="showConfirm" x-transition class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                         <div class="bg-white p-6 rounded-standard shadow-lg max-w-md w-full">
                             <h3 class="text-xl font-bold mb-4">Confirm Submission</h3>
@@ -435,46 +453,143 @@
                         </div>
                     </div>
                 </div>
+                @else
+                <div x-data="{ showConfirm: false }">
+                    <button @click="showConfirm = true" class="bg-blue-500 text-white px-4 py-2 rounded-standard">
+                        Calculate Estimate
+                    </button>
+                    <div x-show="showConfirm" x-transition class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                        <div class="bg-white p-6 rounded-standard shadow-lg max-w-md w-full">
+                            <h3 class="text-xl font-bold mb-4">Confirm Submission</h3>
+                            <p class="mb-4">
+                                By clicking "Calculate Estimate," your information will be sent to us and we will contact you via phone or email to follow up.
+                            </p>
+                            <div class="flex justify-end">
+                                <button @click="showConfirm = false" class="mr-2 px-4 py-2 border rounded-standard">
+                                    Cancel
+                                </button>
+                                <button @click="$wire.submitProject(); showConfirm = false" class="bg-blue-500 text-white px-4 py-2 rounded-standard">
+                                    Yes, Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
             @else
-                <!-- Exterior projects show confirmation modal -->
-                <div x-data="{ showConfirm: false }">
-                    <button @click="showConfirm = true" class="bg-blue-500 text-white px-4 py-2 rounded-standard">
-                        Calculate Estimate
-                    </button>
-
-                    <!-- Confirmation Modal -->
-                    <div x-show="showConfirm" x-transition class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                        <div class="bg-white p-6 rounded-standard shadow-lg max-w-md w-full">
-                            <h3 class="text-xl font-bold mb-4">Confirm Submission</h3>
-                            <p class="mb-4">
-                                By clicking "Calculate Estimate," your information will be sent to us and we will contact you via phone or email to follow up.
-                            </p>
-                            <div class="flex justify-end">
-                                <button @click="showConfirm = false" class="mr-2 px-4 py-2 border rounded-standard">
-                                    Cancel
-                                </button>
-                                <button @click="$wire.submitProject(); showConfirm = false" class="bg-blue-500 text-white px-4 py-2 rounded-standard">
-                                    Yes, Submit
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <button wire:click="nextStep" class="bg-blue-500 text-white px-4 py-2 rounded-standard">
+                    Next
+                </button>
             @endif
         </div>
     @endif
 
-    <!-- Step 4: Review and Submit -->
+    <!-- Step 4: Review (contact first) or Contact form (contact last) -->
     @if ($step === 4)
+        @if ($contactInfoFirst)
+        <div class="p-4 border">
+            <h2 class="text-xl mb-2">Your Price Estimate</h2>
+            <p>Estimated Range: <strong>${{ number_format($estimated_low, 2) }}</strong> - <strong>${{ number_format($estimated_high, 2) }}</strong></p>
+        </div>
+        <div class="flex justify-between mt-4">
+            <button wire:click="previousStep" class="bg-gray-500 text-white px-4 py-2 rounded-standard">Back</button>
+        </div>
+        @else
+        <div>
+            <h2 class="text-xl mb-4">Contact Information</h2>
+            <p class="mb-4">Submit your contact details to see your estimate.</p>
+
+            <div class="mt-4">
+                <label class="block font-medium">Name</label>
+                <div class="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <input
+                            id="step4_first_name"
+                            type="text"
+                            autocomplete="given-name"
+                            placeholder="First name"
+                            wire:model.live="first_name"
+                            class="block w-full rounded-standard border p-2 @error('first_name') border-red-500 @else border-gray-300 @enderror"
+                        />
+                        @error('first_name')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <input
+                            id="step4_last_name"
+                            type="text"
+                            autocomplete="family-name"
+                            placeholder="Last name"
+                            wire:model.live="last_name"
+                            class="block w-full rounded-standard border p-2 @error('last_name') border-red-500 @else border-gray-300 @enderror"
+                        />
+                        @error('last_name')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label for="step4_email" class="block font-medium">Email</label>
+                <input
+                    id="step4_email"
+                    type="email"
+                    wire:model.live="email"
+                    class="mt-1 block w-full rounded-standard border p-2 @error('email') border-red-500 @else border-gray-300 @enderror"
+                />
+                @error('email')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mt-4">
+                <label for="step4_phone" class="block font-medium">Phone</label>
+                <input
+                    id="step4_phone"
+                    type="text"
+                    wire:model.live="phone"
+                    class="mt-1 block w-full rounded-standard border p-2 @error('phone') border-red-500 @else border-gray-300 @enderror"
+                />
+                @error('phone')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mt-4">
+                <label for="step4_zipCode" class="block font-medium">Zip Code</label>
+                <input
+                    id="step4_zipCode"
+                    type="text"
+                    wire:model.live="zipCode"
+                    class="mt-1 block w-full rounded-standard border p-2 @error('zipCode') border-red-500 @else border-gray-300 @enderror"
+                />
+                @error('zipCode')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="flex justify-between mt-6">
+                <button wire:click="previousStep" class="bg-gray-500 text-white px-4 py-2 rounded-standard">Back</button>
+                <button wire:click="submitProject" class="bg-blue-500 text-white px-4 py-2 rounded-standard">Submit</button>
+            </div>
+        </div>
+        @endif
+    @endif
+
+    <!-- Step 5: Review (contact last only – shown after submit) -->
+    @if ($step === 5 && ! $contactInfoFirst)
     <div class="p-4 border">
         <h2 class="text-xl mb-2">Your Price Estimate</h2>
         <p>Estimated Range: <strong>${{ number_format($estimated_low, 2) }}</strong> - <strong>${{ number_format($estimated_high, 2) }}</strong></p>
-        <!-- Optionally, display a breakdown or further instructions -->
+        @if (session('message'))
+            <p class="mt-4 text-green-600 font-medium">{{ session('message') }}</p>
+        @endif
     </div>
     <div class="flex justify-between mt-4">
         <button wire:click="previousStep" class="bg-gray-500 text-white px-4 py-2 rounded-standard">Back</button>
-        <!-- Optionally, you can have a final "Confirm" button here if needed -->
     </div>
-@endif
+    @endif
 
 </div>

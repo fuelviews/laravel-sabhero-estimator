@@ -4,6 +4,7 @@ namespace Fuelviews\SabHeroEstimator\Filament;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+use Fuelviews\SabHeroEstimator\Filament\Pages\EstimatorOptions;
 use Fuelviews\SabHeroEstimator\Filament\Resources\MultiplierResource;
 use Fuelviews\SabHeroEstimator\Filament\Resources\ProjectResource;
 use Fuelviews\SabHeroEstimator\Filament\Resources\RateResource;
@@ -24,6 +25,17 @@ class EstimatorPlugin implements Plugin
     public function register(Panel $panel): void
     {
         $panel->resources($this->getResources());
+        $panel->pages($this->getPages());
+    }
+
+    /**
+     * @return array<class-string<\Filament\Pages\Page>>
+     */
+    protected function getPages(): array
+    {
+        return [
+            EstimatorOptions::class,
+        ];
     }
 
     public function boot(Panel $panel): void

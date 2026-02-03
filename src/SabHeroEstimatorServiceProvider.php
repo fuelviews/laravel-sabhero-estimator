@@ -27,6 +27,7 @@ class SabHeroEstimatorServiceProvider extends PackageServiceProvider
                 'populate_estimator_rates_defaults',
                 'populate_estimator_multipliers_defaults',
                 'populate_estimator_settings_defaults',
+                'add_contact_info_order_setting',
             ])
             ->hasCommands([
                 SabHeroEstimatorInstallCommand::class,

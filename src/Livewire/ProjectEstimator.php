@@ -73,6 +73,9 @@ class ProjectEstimator extends Component
     // Flag to control when contact step errors should be shown.
     public bool $touchedContact = false;
 
+    // When true, contact is collected on step 2 (before measurements). When false, contact is on step 5 (after review).
+    public bool $contactInfoFirst = true;
+
     // Calculated estimates
     public $estimated_low;
 
@@ -190,6 +193,9 @@ class ProjectEstimator extends Component
         $this->interior_scope = null;
         $this->full_floor_space = null;
         $this->full_items = [];
+
+        // Contact info order: "first" = collect contact on step 2, "last" = collect contact on step 5
+        $this->contactInfoFirst = Setting::getValue('contact_info_order', 'first') === 'first';
     }
 
     // Return true only if there is at least one real paint_condition option
@@ -269,26 +275,39 @@ class ProjectEstimator extends Component
         // Clear errors so we don't show stale messages
         $this->resetValidation();
 
-        // STEP 4 ← STEP 3
+        if (! $this->contactInfoFirst) {
+            // Contact last: 5 steps (step 4 = contact only, step 5 = review + submit)
+            if ($this->step === 5) {
+                $this->step = 4;
+                return;
+            }
+            if ($this->step === 4) {
+                $this->step = 3;
+                return;
+            }
+            if ($this->step === 3) {
+                $this->step = 2;
+                return;
+            }
+            if ($this->step === 2) {
+                $this->step = 1;
+                return;
+            }
+            return;
+        }
+
+        // Contact first: 4 steps
         if ($this->step === 4) {
             $this->step = 3;
-
             return;
         }
-
-        // STEP 3 ← STEP 2
         if ($this->step === 3) {
-            // We're going back to contact info, hide its errors again
             $this->touchedContact = false;
             $this->step = 2;
-
             return;
         }
-
-        // STEP 2 ← STEP 1
         if ($this->step === 2) {
             $this->step = 1;
-
             return;
         }
     }
@@ -298,38 +317,100 @@ class ProjectEstimator extends Component
         // Clear any previous validation/errors before moving
         $this->resetValidation();
 
-        // STEP 1 → STEP 2 (no validation)
-        if ($this->step === 1) {
-            $this->step = 2;
-
+        if (! $this->contactInfoFirst) {
+            // Contact last: step 1→2, 2→3, 3→4 (with calculate; step 4 = contact + price + submit)
+            if ($this->step === 1) {
+                $this->step = 2;
+                return;
+            }
+            if ($this->step === 2) {
+                $this->validateStep(2);
+                $this->step = 3;
+                return;
+            }
+            if ($this->step === 3) {
+                $this->validateStep(3);
+                $this->calculateEstimate();
+                $this->step = 4;
+                return;
+            }
             return;
         }
 
-        // STEP 2 → STEP 3 (validate contact info)
+        // Contact first: step 1→2, 2→3 (step 3→4 is via submitProject in view)
+        if ($this->step === 1) {
+            $this->step = 2;
+            return;
+        }
         if ($this->step === 2) {
             $this->touchedContact = true;
             $this->validateStep(2);
             $this->step = 3;
-
             return;
         }
-
-        // STEP 3 → STEP 4 (validate measurements, then calculate)
         if ($this->step === 3) {
             $this->validateStep(3);
             $this->calculateEstimate();
             $this->step = 4;
-
             return;
         }
+    }
+
+    /**
+     * When contact is collected last: validate step 3, calculate estimate, advance to step 4 (contact).
+     */
+    public function calculateAndContinue(): void
+    {
+        $this->resetValidation();
+        $this->validateStep(3);
+        $this->calculateEstimate();
+        $this->step = 4;
+    }
+
+    /**
+     * When contact is collected last: validate step 4 (contact), then advance to step 5 to show estimate.
+     */
+    public function contactAndShowEstimate(): void
+    {
+        $this->resetValidation();
+        $this->validateStep(4);
+        $this->step = 5;
     }
 
     // Validation for each step
     public function validateStep($step)
     {
         if ($step == 2) {
+            if ($this->contactInfoFirst) {
+                $this->validate([
+                    'project_type' => 'required|in:interior,exterior',
+                    'first_name' => 'required|string|max:25',
+                    'last_name' => 'required|string|max:25',
+                    'email' => 'required|email|max:65',
+                    'phone' => 'required|string|max:50',
+                    'zipCode' => 'required|string|max:12',
+                ]);
+            } else {
+                $this->validate([
+                    'project_type' => 'required|in:interior,exterior',
+                ]);
+            }
+        }
+
+        if ($step == 4 && ! $this->contactInfoFirst) {
+            $this->touchedContact = true;
             $this->validate([
-                'project_type' => 'required|in:interior,exterior',
+                'first_name' => 'required|string|max:25',
+                'last_name' => 'required|string|max:25',
+                'email' => 'required|email|max:65',
+                'phone' => 'required|string|max:50',
+                'zipCode' => 'required|string|max:12',
+            ]);
+        }
+
+        if ($step == 5) {
+            $this->touchedContact = true;
+            $this->validate([
                 'first_name' => 'required|string|max:25',
                 'last_name' => 'required|string|max:25',
                 'email' => 'required|email|max:65',
@@ -566,7 +647,7 @@ class ProjectEstimator extends Component
             ]);
         }
 
-        session()->flash('message', 'Project submitted successfully!');
+        session()->flash('message', 'Your estimate is ready. We\'ll reach out soon to follow up.');
 
         // Submit to external API
         $projectData = array_merge($this->getCalculationData(), [
@@ -581,8 +662,8 @@ class ProjectEstimator extends Component
 
         $this->formSubmissionService->submit($projectData);
 
-        // Update the step to 4 to show the review panel with calculated price
-        $this->step = 4;
+        // Stay on review step (4 when contact first, 5 when contact last)
+        $this->step = $this->contactInfoFirst ? 4 : 5;
     }
 
     public function updatedProjectType($value)

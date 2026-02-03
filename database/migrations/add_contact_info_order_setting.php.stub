@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        $tablePrefix = config('sabhero-estimator.table.prefix');
+
+        DB::table($tablePrefix.'settings')->updateOrInsert(
+            ['key' => 'contact_info_order'],
+            [
+                'key' => 'contact_info_order',
+                'value' => 'first',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+    }
+
+    public function down(): void
+    {
+        $tablePrefix = config('sabhero-estimator.table.prefix');
+
+        DB::table($tablePrefix.'settings')
+            ->where('key', 'contact_info_order')
+            ->delete();
+    }
+};

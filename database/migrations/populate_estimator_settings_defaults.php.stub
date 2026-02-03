@@ -52,6 +52,12 @@ return new class extends Migration
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'key' => 'contact_info_order',
+                'value' => 'first',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ];
 
         foreach ($settings as $setting) {
@@ -75,6 +81,7 @@ return new class extends Migration
             'select_house_style_label',
             'number_of_floors_label',
             'number_of_floors_default_option',
+            'contact_info_order',
         ];
 
         DB::table($tablePrefix . 'settings')
