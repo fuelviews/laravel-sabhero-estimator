@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        $tablePrefix = config('sabhero-estimator.table.prefix');
+
+        DB::table($tablePrefix.'settings')->updateOrInsert(
+            ['key' => 'full_interior_assumption_label'],
+            [
+                'key' => 'full_interior_assumption_label',
+                'value' => '',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+    }
+
+    public function down(): void
+    {
+        $tablePrefix = config('sabhero-estimator.table.prefix');
+
+        DB::table($tablePrefix.'settings')
+            ->where('key', 'full_interior_assumption_label')
+            ->delete();
+    }
+};

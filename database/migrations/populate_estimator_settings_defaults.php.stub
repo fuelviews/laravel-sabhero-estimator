@@ -70,6 +70,12 @@ return new class extends Migration
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'key' => 'full_interior_assumption_label',
+                'value' => '',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ];
 
         foreach ($settings as $setting) {
@@ -96,6 +102,7 @@ return new class extends Migration
             'contact_info_order',
             'interior_scope_show_choice',
             'interior_scope_default',
+            'full_interior_assumption_label',
         ];
 
         DB::table($tablePrefix . 'settings')

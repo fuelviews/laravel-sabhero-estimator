@@ -95,6 +95,9 @@ class ProjectEstimator extends Component
 
     public array $interiorFullItems = [];
 
+    /** Optional note shown in full interior section (e.g. assumes all/most walls). Empty = hidden. */
+    public string $fullInteriorAssumptionLabel = '';
+
     // Define which field should be displayed for each surface type.
     public $surfaceInputMapping = [
         'interior_wall' => 'measurement',
@@ -206,6 +209,8 @@ class ProjectEstimator extends Component
 
         // Contact info order: "first" = collect contact on step 2, "last" = collect contact on step 5
         $this->contactInfoFirst = Setting::getValue('contact_info_order', 'first') === 'first';
+
+        $this->fullInteriorAssumptionLabel = (string) Setting::getValue('full_interior_assumption_label', '');
     }
 
     // Return true only if there is at least one real paint_condition option

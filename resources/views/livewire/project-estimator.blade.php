@@ -250,6 +250,9 @@
             @endif
             @if ($interior_scope === 'full')
                 <div class="border p-4 rounded-standard mb-4">
+                    @if (! empty($fullInteriorAssumptionLabel))
+                        <p class="text-sm text-gray-600 mb-4">{{ $fullInteriorAssumptionLabel }}</p>
+                    @endif
                     <label for="full_floor_space" class="block font-medium">Total Floor Space (sq&nbsp;ft)</label>
                     <input
                         id="full_floor_space"

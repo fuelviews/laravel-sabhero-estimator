@@ -4,6 +4,7 @@ namespace Fuelviews\SabHeroEstimator\Filament\Pages;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -41,6 +42,7 @@ class EstimatorOptions extends Page
             'contact_info_order' => Setting::getValue('contact_info_order', 'first'),
             'interior_scope_show_choice' => Setting::getValue('interior_scope_show_choice', '1') !== '0',
             'interior_scope_default' => Setting::getValue('interior_scope_default', 'full'),
+            'full_interior_assumption_label' => Setting::getValue('full_interior_assumption_label', ''),
         ]);
     }
 
@@ -68,6 +70,11 @@ class EstimatorOptions extends Page
                     ->required()
                     ->native(false)
                     ->visible(fn ($get) => ! $get('interior_scope_show_choice')),
+                TextInput::make('full_interior_assumption_label')
+                    ->label('Full interior assumption note (optional)')
+                    ->placeholder('This estimate assumes all or most walls are being painted.')
+                    ->helperText('Shown in the full interior section. Leave blank to hide.')
+                    ->maxLength(255),
             ])
             ->statePath('data');
     }
@@ -101,6 +108,11 @@ class EstimatorOptions extends Page
                             ->required()
                             ->native(false)
                             ->visible(fn ($get) => ! $get('interior_scope_show_choice')),
+                        TextInput::make('full_interior_assumption_label')
+                            ->label('Full interior assumption note (optional)')
+                            ->placeholder('This estimate assumes all or most walls are being painted.')
+                            ->helperText('Shown in the full interior section. Leave blank to hide.')
+                            ->maxLength(255),
                     ])
                     ->statePath('data')
             ),
@@ -130,6 +142,7 @@ class EstimatorOptions extends Page
             (! empty($data['interior_scope_show_choice'])) ? '1' : '0'
         );
         Setting::setValue('interior_scope_default', $data['interior_scope_default'] ?? 'full');
+        Setting::setValue('full_interior_assumption_label', $data['full_interior_assumption_label'] ?? '');
 
         Notification::make()
             ->title('Estimator options saved.')
