@@ -4,6 +4,7 @@ namespace Fuelviews\SabHeroEstimator\Filament\Pages;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -38,6 +39,8 @@ class EstimatorOptions extends Page
     {
         $this->form->fill([
             'contact_info_order' => Setting::getValue('contact_info_order', 'first'),
+            'interior_scope_show_choice' => Setting::getValue('interior_scope_show_choice', '1') !== '0',
+            'interior_scope_default' => Setting::getValue('interior_scope_default', 'full'),
         ]);
     }
 
@@ -53,6 +56,18 @@ class EstimatorOptions extends Page
                     ])
                     ->required()
                     ->native(false),
+                Toggle::make('interior_scope_show_choice')
+                    ->label('Let user choose full or partial interior')
+                    ->default(true),
+                Select::make('interior_scope_default')
+                    ->label('Default interior scope (when choice is hidden)')
+                    ->options([
+                        'full' => 'Full interior',
+                        'partial' => 'Partial interior',
+                    ])
+                    ->required()
+                    ->native(false)
+                    ->visible(fn ($get) => ! $get('interior_scope_show_choice')),
             ])
             ->statePath('data');
     }
@@ -74,6 +89,18 @@ class EstimatorOptions extends Page
                             ])
                             ->required()
                             ->native(false),
+                        Toggle::make('interior_scope_show_choice')
+                            ->label('Let user choose full or partial interior')
+                            ->default(true),
+                        Select::make('interior_scope_default')
+                            ->label('Default interior scope (when choice is hidden)')
+                            ->options([
+                                'full' => 'Full interior',
+                                'partial' => 'Partial interior',
+                            ])
+                            ->required()
+                            ->native(false)
+                            ->visible(fn ($get) => ! $get('interior_scope_show_choice')),
                     ])
                     ->statePath('data')
             ),
@@ -98,6 +125,11 @@ class EstimatorOptions extends Page
         $data = $this->form->getState();
 
         Setting::setValue('contact_info_order', $data['contact_info_order'] ?? 'first');
+        Setting::setValue(
+            'interior_scope_show_choice',
+            (! empty($data['interior_scope_show_choice'])) ? '1' : '0'
+        );
+        Setting::setValue('interior_scope_default', $data['interior_scope_default'] ?? 'full');
 
         Notification::make()
             ->title('Estimator options saved.')

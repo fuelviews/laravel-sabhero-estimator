@@ -160,7 +160,8 @@
     <!-- Step 3: Measurements -->
     @if ($step === 3)
         @if ($project_type === 'interior')
-            {{-- Choose interior scope (always shown so user can switch) --}}
+            @if ($interiorScopeShowChoice)
+            {{-- Choose interior scope (only when admin allows user to choose) --}}
             <div class="p-4 border rounded-standard mb-4">
                 <h3 class="text-lg font-bold mb-4">What part of the interior are we painting?</h3>
                 <div class="space-y-2">
@@ -177,6 +178,7 @@
                     <p class="text-red-600 text-sm mt-2">{{ $message }}</p>
                 @enderror
             </div>
+            @endif
             @if ($interior_scope === 'partial')
             <div>
                 @foreach ($areas as $index => $area)

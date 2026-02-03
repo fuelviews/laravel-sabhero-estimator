@@ -76,6 +76,11 @@ class ProjectEstimator extends Component
     // When true, contact is collected on step 2 (before measurements). When false, contact is on step 5 (after review).
     public bool $contactInfoFirst = true;
 
+    // When true, user chooses full vs partial interior. When false, interior_scope is set from interiorScopeDefault.
+    public bool $interiorScopeShowChoice = true;
+
+    public string $interiorScopeDefault = 'full';
+
     // Calculated estimates
     public $estimated_low;
 
@@ -190,9 +195,14 @@ class ProjectEstimator extends Component
             ->toArray();
 
         // Initialize interior scope vars
+        $this->interiorScopeShowChoice = Setting::getValue('interior_scope_show_choice', '1') !== '0';
+        $this->interiorScopeDefault = Setting::getValue('interior_scope_default', 'full');
         $this->interior_scope = null;
         $this->full_floor_space = null;
         $this->full_items = [];
+        if (! $this->interiorScopeShowChoice) {
+            $this->interior_scope = $this->interiorScopeDefault;
+        }
 
         // Contact info order: "first" = collect contact on step 2, "last" = collect contact on step 5
         $this->contactInfoFirst = Setting::getValue('contact_info_order', 'first') === 'first';
@@ -668,6 +678,10 @@ class ProjectEstimator extends Component
 
     public function updatedProjectType($value)
     {
+        if ($value === 'interior' && ! $this->interiorScopeShowChoice) {
+            $this->interior_scope = $this->interiorScopeDefault;
+        }
+
         // Rebuild surface types for the new project type
         $this->loadSurfaceTypes();
 

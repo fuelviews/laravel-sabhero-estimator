@@ -58,6 +58,18 @@ return new class extends Migration
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'key' => 'interior_scope_show_choice',
+                'value' => '1',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'key' => 'interior_scope_default',
+                'value' => 'full',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ];
 
         foreach ($settings as $setting) {
@@ -82,6 +94,8 @@ return new class extends Migration
             'number_of_floors_label',
             'number_of_floors_default_option',
             'contact_info_order',
+            'interior_scope_show_choice',
+            'interior_scope_default',
         ];
 
         DB::table($tablePrefix . 'settings')

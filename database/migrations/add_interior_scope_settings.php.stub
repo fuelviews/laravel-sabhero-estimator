@@ -1,0 +1,41 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        $tablePrefix = config('sabhero-estimator.table.prefix');
+
+        DB::table($tablePrefix.'settings')->updateOrInsert(
+            ['key' => 'interior_scope_show_choice'],
+            [
+                'key' => 'interior_scope_show_choice',
+                'value' => '1',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        DB::table($tablePrefix.'settings')->updateOrInsert(
+            ['key' => 'interior_scope_default'],
+            [
+                'key' => 'interior_scope_default',
+                'value' => 'full',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+    }
+
+    public function down(): void
+    {
+        $tablePrefix = config('sabhero-estimator.table.prefix');
+
+        DB::table($tablePrefix.'settings')
+            ->whereIn('key', ['interior_scope_show_choice', 'interior_scope_default'])
+            ->delete();
+    }
+};
