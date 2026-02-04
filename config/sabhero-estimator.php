@@ -37,6 +37,7 @@ return [
     |
     */
     'defaults' => [
+        'currency' => 'USD',
         'currency_symbol' => '$',
         'decimal_places' => 2,
     ],

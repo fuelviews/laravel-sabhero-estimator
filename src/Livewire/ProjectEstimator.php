@@ -677,6 +677,13 @@ class ProjectEstimator extends Component
 
         $this->formSubmissionService->submit($projectData);
 
+        $this->dispatch('estimator-completed', eventData: [
+            'project_type' => $this->project_type,
+            'estimated_low' => $this->estimated_low,
+            'estimated_high' => $this->estimated_high,
+            'currency' => config('sabhero-estimator.defaults.currency', 'USD'),
+        ]);
+
         // Stay on review step (4 when contact first, 5 when contact last)
         $this->step = $this->contactInfoFirst ? 4 : 5;
     }

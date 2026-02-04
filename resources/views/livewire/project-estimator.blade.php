@@ -2,7 +2,25 @@
 @php
     $totalSteps = $contactInfoFirst ? 4 : 5;
 @endphp
-<div class="max-w-xl mx-auto mb-12 p-4 lg:p-0">
+<div
+    class="max-w-xl mx-auto mb-12 p-4 lg:p-0"
+    x-data="{}"
+    @estimator-completed.window="
+        const eventData = $event.detail.eventData || {};
+        const low = Number(eventData.estimated_low);
+        const high = Number(eventData.estimated_high);
+        const value = (Number.isFinite(low) && Number.isFinite(high)) ? (low + high) / 2 : (Number.isFinite(high) ? high : 0);
+        if (typeof gtag === 'function') {
+            gtag('event', 'generate_lead', {
+                currency: eventData.currency || 'USD',
+                value: value,
+                project_type: eventData.project_type,
+                estimated_low: eventData.estimated_low,
+                estimated_high: eventData.estimated_high
+            });
+        }
+    "
+>
     <!-- Progress Bar -->
     <div class="mb-4">
         <div class="flex justify-between">
