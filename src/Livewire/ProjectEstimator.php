@@ -294,35 +294,43 @@ class ProjectEstimator extends Component
             // Contact last: 5 steps (step 4 = contact only, step 5 = review + submit)
             if ($this->step === 5) {
                 $this->step = 4;
+
                 return;
             }
             if ($this->step === 4) {
                 $this->step = 3;
+
                 return;
             }
             if ($this->step === 3) {
                 $this->step = 2;
+
                 return;
             }
             if ($this->step === 2) {
                 $this->step = 1;
+
                 return;
             }
+
             return;
         }
 
         // Contact first: 4 steps
         if ($this->step === 4) {
             $this->step = 3;
+
             return;
         }
         if ($this->step === 3) {
             $this->touchedContact = false;
             $this->step = 2;
+
             return;
         }
         if ($this->step === 2) {
             $this->step = 1;
+
             return;
         }
     }
@@ -336,37 +344,44 @@ class ProjectEstimator extends Component
             // Contact last: step 1→2, 2→3, 3→4 (with calculate; step 4 = contact + price + submit)
             if ($this->step === 1) {
                 $this->step = 2;
+
                 return;
             }
             if ($this->step === 2) {
                 $this->validateStep(2);
                 $this->step = 3;
+
                 return;
             }
             if ($this->step === 3) {
                 $this->validateStep(3);
                 $this->calculateEstimate();
                 $this->step = 4;
+
                 return;
             }
+
             return;
         }
 
         // Contact first: step 1→2, 2→3 (step 3→4 is via submitProject in view)
         if ($this->step === 1) {
             $this->step = 2;
+
             return;
         }
         if ($this->step === 2) {
             $this->touchedContact = true;
             $this->validateStep(2);
             $this->step = 3;
+
             return;
         }
         if ($this->step === 3) {
             $this->validateStep(3);
             $this->calculateEstimate();
             $this->step = 4;
+
             return;
         }
     }
